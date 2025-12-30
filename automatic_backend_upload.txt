@@ -1,0 +1,50 @@
+const cloudinary = require('../config/cloudinary');
+
+// inside your controller
+const uploadImage = async (fileBuffer) => {
+  try {
+    const result = await cloudinary.uploader.upload_stream(
+      { folder: 'portfolio_projects' },
+      (error, result) => {
+        if (error) throw error;
+        return result.secure_url;
+      }
+    ).end(fileBuffer);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
+this part i only need to do when i try to upload image in a route
+
+
+
+
+
+
+Exactly ✅ — you only need this part inside your controller when you actually want to upload an image via an API route.
+
+Right now, if you’re just manually uploading images in the Cloudinary dashboard and storing the URLs in MongoDB, you don’t need this yet.
+
+Here’s how it works:
+
+Manual upload for now:
+
+Go to your Cloudinary dashboard → Upload → Copy the image URL.
+
+Store that URL in your MongoDB Project.images[] field.
+
+Automatic upload via backend (later):
+
+You create a route like /api/admin/projects/upload that uses Multer to accept an image file.
+
+In the controller for that route, you use the uploadImage function you posted to send the file to Cloudinary.
+
+Store the returned secure_url in MongoDB.
+
+So basically: this code is “for later” when you want file uploads through your API.
+
+If you want, I can make a ready-to-use admin route + controller for project uploads so you can plug it in when you’re ready. It’ll handle Multer + Cloudinary + MongoDB automatically.
+
+Do you want me to do that?
