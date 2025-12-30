@@ -10,6 +10,9 @@ const achievementRoutes = require("./routes/achievementRoutes");
 const skillRoutes = require("./routes/skillRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 
+//admin routes
+const adminRoutes = require('./routes/adminRoutes');
+
 const app = express();
 
 // middleware
@@ -25,10 +28,26 @@ app.get("/", (req, res) => {
 });
 
 // API routes
-app.use("/api/projects", projectRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/skills", skillRoutes);
 app.use("/api/messages", messageRoutes);
+
+// Public prefixes for routes
+app.use("/api/projects", projectRoutes);
+app.use("/api/achievements", achievementRoutes);   
+app.use("/api/skills", skillRoutes);       
+app.use("/api/messages", messageRoutes);          
+
+
+// Admin prefix (JWT protected inside the router)
+app.use("/api/admin/projects", projectRoutes);
+app.use("/api/admin/achievements", achievementRoutes); 
+app.use("/api/admin/messages", messageRoutes);  
+app.use("/api/admin/skills", skillRoutes);        
+  
+
+//admin API routes (admin auth)
+app.use('/api/admin', adminRoutes);
 
 // start server
 const PORT = process.env.PORT || 5000;
