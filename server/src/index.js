@@ -1,9 +1,14 @@
-// /server/src/index.js
-require('dotenv').config(); // loads /server/.env
+require("dotenv").config(); // loads /server/.env
 
-const express = require('express');
-const cors = require('cors');
-const connectDB = require('./config/db');
+const express = require("express");
+const cors = require("cors");
+const connectDB = require("./config/db");
+
+// route imports
+const projectRoutes = require("./routes/projectRoutes");
+const achievementRoutes = require("./routes/achievementRoutes");
+const skillRoutes = require("./routes/skillRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 
 const app = express();
 
@@ -15,9 +20,15 @@ app.use(express.json());
 connectDB();
 
 // basic test route
-app.get('/', (req, res) => {
-  res.send('API is running...');
+app.get("/", (req, res) => {
+  res.send("API is running...");
 });
+
+// API routes
+app.use("/api/projects", projectRoutes);
+app.use("/api/achievements", achievementRoutes);
+app.use("/api/skills", skillRoutes);
+app.use("/api/messages", messageRoutes);
 
 // start server
 const PORT = process.env.PORT || 5000;
