@@ -1,0 +1,287 @@
+Phase 4 – Frontend Layout & Routing
+Setup routing and layout:
+
+Use react-router-dom:
+
+/ – Home (all sections as scrollable).
+
+/projects/:id – detailed project page.
+
+/admin/login
+
+/admin/dashboard (+ nested sub‑pages).
+
+Create layout components:
+
+Navbar, Footer, SectionWrapper (for consistent padding, max‑width).
+
+Global styling:
+
+Define Tailwind config theme (colors, fonts).
+
+Use a consistent max‑width container (e.g. max-w-6xl mx-auto px-4).
+
+Implement smooth scrolling and section IDs.
+
+Dark / light mode:
+
+Use Tailwind’s dark mode with a dark class on html or body.
+
+Use a React context hook for theme and a toggle button in navbar.
+
+Phase 5 – Core Public Sections
+Home / Hero section:
+
+Elements:
+
+Name, role (e.g., “Software Engineering Undergraduate | Full‑Stack & Cloud Enthusiast”).
+
+Short 1–2 line intro.
+
+Buttons: “Download CV”, “View Projects”, “Contact Me”.
+
+Use Framer Motion for:
+
+Fade‑in on load.
+
+Animated text or subtle entrance of elements.
+​
+
+Tailwind for responsive layout (stack vertically on mobile, side‑by‑side on desktop).
+
+About section:
+
+Content:
+
+Brief story (who you are, what you enjoy building).
+
+Education (SLIIT, batch, specialization).
+
+A simple timeline (Tailwind flex/vertical border) to show milestones.
+
+Include a small photo (hosted via Cloudinary or in /public).
+
+Skills section:
+
+Fetch from /api/skills.
+
+Group by category (Frontend / Backend / Tools / Data).
+
+Design:
+
+Cards or chips with icons (React Icons).
+
+Optional progress bars for proficiency.
+
+Use responsive grid: grid md:grid-cols-2 lg:grid-cols-4 gap-4.
+
+Projects section:
+
+Fetch from /api/projects.
+
+Cards show:
+
+Title, short description, tech stack badges.
+
+Buttons: “Live Demo”, “GitHub”.
+
+Thumbnail image.
+
+Filtering:
+
+Local state activeFilter='All'.
+
+Filter buttons (All / Web / Data / Mobile etc.) – filter client‑side.
+
+Add subtle hover effects and Framer Motion on scroll.
+
+Project detail page:
+
+Route /projects/:id.
+
+Fetch a single project from /api/projects/:id.
+
+Show:
+
+Problem → Solution narrative.
+
+Features list.
+
+Tech stack.
+
+Challenges & learnings.
+
+This page demonstrates your engineering thinking, not just UI.
+
+Achievements & certifications:
+
+Fetch from /api/achievements.
+
+Display as cards or timeline:
+
+Title, issuer, date, description, link to certificate image.
+
+Use badges for types (Competition / Certification / Academic).
+
+CV download:
+
+Upload a PDF to backend or storage.
+
+Simple approach:
+
+Put cv.pdf in backend public folder and expose /files/cv.
+
+Frontend button simply hits that URL with download attribute.
+
+Optionally track with a POST /api/analytics/cv-download that increments a counter.
+
+Contact section:
+
+Form fields: name, email, message.
+
+Validate on frontend.
+
+Submit to /api/messages.
+
+Show success or error UI.
+
+Optionally integrate Google reCAPTCHA v2 or v3.
+
+Footer:
+
+Include:
+
+LinkedIn, GitHub, email, maybe Kaggle, LeetCode, etc.
+
+Use React Icons (e.g., FaGithub, FaLinkedin).
+
+Ensure mobile‑friendly spacing and big tap targets.
+
+Phase 6 – Admin Frontend (Dashboard)
+Admin login:
+
+/admin/login:
+
+Form: email, password.
+
+On success, store JWT in localStorage or httpOnly cookie (cookie is safer).
+
+Protect routes:
+
+Custom PrivateRoute component that checks token and redirects to login.
+
+Dashboard layout:
+
+/admin/dashboard with sidebar:
+
+Menu: Projects, Achievements, Skills, Messages, Settings.
+
+Use a simple Tailwind layout with responsive drawer on mobile.
+
+CRUD interfaces:
+
+Each section:
+
+List view (table or cards).
+
+Add / Edit form.
+
+On save:
+
+Call corresponding /api/admin/* endpoint with JWT.
+
+Messages page:
+
+List messages, mark as read, view full content.
+
+Deployment configuration later:
+
+Plan environment variables:
+
+VITE_API_BASE_URL in frontend.
+
+MONGO_URI, JWT_SECRET, EMAIL_USER, EMAIL_PASS, CLOUDINARY_* in backend.
+
+Phase 7 – Polishing UI/UX
+Responsiveness:
+
+Test breakpoints:
+
+Mobile: 360–420 width.
+
+Tablet: ~768.
+
+Laptop: 1024+.
+
+Fix any overflow using Tailwind utilities:
+
+flex-wrap, overflow-hidden, truncate, etc.
+
+Micro‑interactions:
+
+Add hover animations to buttons and cards.
+
+Use Framer Motion for:
+
+Section fade‑ins when scrolling.
+
+Slight tilt/scale of project cards on hover.
+
+Keep animations subtle; avoid hurting readability.
+​
+
+Optional advanced features:
+
+GitHub API:
+
+Server route that fetches your pinned repos or latest projects and caches them.
+
+Blog:
+
+Simple /api/posts with markdown content.
+
+Render with a markdown library in React.
+
+Analytics:
+
+Use a free analytics tool (e.g., plausible, simple GA) or track simple counts in MongoDB.
+
+Phase 8 – Deployment
+Backend:
+
+Host on Render / Railway:
+
+Push /server to GitHub.
+
+Configure:
+
+Node version.
+
+npm start or node src/index.js.
+
+Set environment variables in dashboard.
+​
+
+Database:
+
+MongoDB Atlas cluster (free tier).
+
+Whitelist Render / Railway IP or allow “Anywhere” with strong credentials.
+
+Frontend:
+
+Deploy /client on Vercel or Netlify:
+
+Connect GitHub repo.
+
+Build command: npm run build.
+
+Set VITE_API_BASE_URL to your backend URL.
+
+Domain:
+
+Buy a .dev or .me domain.
+
+Point DNS to Vercel/Netlify.
+
+Ensure HTTPS.
