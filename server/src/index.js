@@ -15,6 +15,10 @@ const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
+//cv files static folder
+const path = require("path");
+app.use("/files", express.static(path.join(__dirname, "../public")));
+
 // middleware
 app.use(cors());
 app.use(express.json());
@@ -27,23 +31,18 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// API routes
+// API routes (public)
+app.use("/api/projects", projectRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/skills", skillRoutes);
-app.use("/api/messages", messageRoutes);
-
-// Public prefixes for routes
-app.use("/api/projects", projectRoutes);
-app.use("/api/achievements", achievementRoutes);   
-app.use("/api/skills", skillRoutes);       
-app.use("/api/messages", messageRoutes);          
+app.use("/api/messages", messageRoutes);        
 
 
-// Admin prefix (JWT protected inside the router)
+// Admin prefix (JWT protected inside routers)
 app.use("/api/admin/projects", projectRoutes);
-app.use("/api/admin/achievements", achievementRoutes); 
-app.use("/api/admin/messages", messageRoutes);  
-app.use("/api/admin/skills", skillRoutes);        
+app.use("/api/admin/achievements", achievementRoutes);
+app.use("/api/admin/messages", messageRoutes);
+app.use("/api/admin/skills", skillRoutes);      
   
 
 //admin API routes (admin auth)
