@@ -1,24 +1,34 @@
 // src/pages/admin/AdminLoginPage.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { adminLogin } from "../../lib/adminApi"; // ✅ import helper
+
 
 function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      // TODO: call POST /api/admin/login with fetch/axios
-      // const res = await axios.post("/api/admin/login", { email, password });
-      // localStorage.setItem("token", res.data.token);
+      // Call POST /api/admin/login
+      const data = await adminLogin({ email, password });
+      // Expect backend to respond with { token: "..." }
+      localStorage.setItem("portfolio_admin_token", data.token);
+
+      // Redirect to admin dashboard
       navigate("/admin/dashboard/projects");
     } catch (err) {
+      console.error(err);
       setError("Login failed. Check credentials.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,9 +71,10 @@ function AdminLoginPage() {
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-sky-600 px-4 py-2 text-xs font-medium text-white hover:bg-sky-700 transition"
+            disabled={loading}
+            className="w-full rounded-lg bg-sky-600 px-4 py-2 text-xs font-medium text-white hover:bg-sky-700 transition disabled:opacity-60"
           >
-            Sign in
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
       </div>
