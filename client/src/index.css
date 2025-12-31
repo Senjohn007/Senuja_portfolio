@@ -1,12 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ✅ Tailwind v4 import */
+@import "tailwindcss";
 
+/* smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Base light/dark backgrounds via Tailwind utilities */
+/* Base light/dark backgrounds */
 body {
   background-color: #f8fafc;     /* slate-50 */
   color: #0f172a;                /* slate-900 */
@@ -17,7 +17,7 @@ body {
   color: #f9fafb;                /* slate-50 */
 }
 
-/* Optional: minimal reset, but NO flex centering here */
+/* minimal reset */
 :root {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.5;
