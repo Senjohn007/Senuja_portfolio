@@ -28,6 +28,7 @@ exports.getProjects = async (req, res) => {
 };
 
 // POST /api/admin/projects
+// server/src/controllers/projectController.js
 exports.createProject = async (req, res) => {
   try {
     const {
@@ -42,7 +43,8 @@ exports.createProject = async (req, res) => {
 
     if (!title || !description || !techStack || !links || !links.repo || !category) {
       return res.status(400).json({
-        message: "title, description, techStack, links.repo, and category are required",
+        message:
+          "title, description, techStack, links.repo, and category are required",
       });
     }
 
@@ -56,6 +58,7 @@ exports.createProject = async (req, res) => {
       featured: featured ?? false,
     });
 
+    // keep this shape; frontend already handles both .data and direct
     res.status(201).json({
       message: "Project created successfully",
       data: project,
@@ -67,6 +70,7 @@ exports.createProject = async (req, res) => {
     });
   }
 };
+
 
 // PUT /api/admin/projects/:id
 exports.updateProject = async (req, res) => {

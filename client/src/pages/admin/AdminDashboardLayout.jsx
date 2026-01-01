@@ -6,7 +6,7 @@ function AdminDashboardLayout() {
 
   function handleLogout() {
     localStorage.removeItem("portfolio_admin_token");
-    navigate("/admin/login");
+    navigate("/");
   }
 
   const linkBase =

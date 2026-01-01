@@ -15,7 +15,7 @@ function AdminAchievementsPage() {
     title: "",
     issuer: "",
     date: "",
-    type: "Certification",
+    type: "Certificate", // must match enum
     certificateUrl: "",
     description: "",
   });
@@ -57,32 +57,49 @@ function AdminAchievementsPage() {
 
   async function handleCreate(e) {
     e.preventDefault();
-    if (!form.title.trim()) return;
+
+    if (!form.title.trim() || !form.issuer.trim() || !form.date) {
+      alert("Title, issuer, and date are required.");
+      return;
+    }
+
+    // Ensure type matches the allowed enum
+    const allowedTypes = ["Certificate", "Award", "Competition", "Academic"];
+    const type = allowedTypes.includes(form.type) ? form.type : "Certificate";
+
+    // Convert date string (yyyy-mm-dd) into ISO Date string
+    const dateIso = new Date(form.date).toISOString();
 
     setSaving(true);
     try {
       const payload = {
         title: form.title.trim(),
         issuer: form.issuer.trim(),
-        date: form.date || null,
-        type: form.type,
+        date: dateIso,
+        type,
         certificateUrl: form.certificateUrl.trim() || undefined,
         description: form.description.trim() || undefined,
       };
 
-      const created = await adminCreateAchievement(payload);
+      const createdRes = await adminCreateAchievement(payload);
+      const created = createdRes.data || createdRes;
+
       setAchievements((prev) => [created, ...prev]);
       setForm({
         title: "",
         issuer: "",
         date: "",
-        type: "Certification",
+        type: "Certificate",
         certificateUrl: "",
         description: "",
       });
     } catch (err) {
       console.error(err);
-      alert("Failed to create achievement.");
+      alert(
+        err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          "Failed to create achievement."
+      );
     } finally {
       setSaving(false);
     }
@@ -135,6 +152,7 @@ function AdminAchievementsPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, date: e.target.value }))
               }
+              required
             />
           </div>
           <div>
@@ -146,10 +164,10 @@ function AdminAchievementsPage() {
                 setForm((f) => ({ ...f, type: e.target.value }))
               }
             >
-              <option>Certification</option>
+              <option>Certificate</option>
+              <option>Award</option>
               <option>Competition</option>
               <option>Academic</option>
-              <option>Other</option>
             </select>
           </div>
           <div>
@@ -209,9 +227,7 @@ function AdminAchievementsPage() {
               className="border border-slate-200 dark:border-slate-700 rounded-lg p-3 flex items-start justify-between gap-3"
             >
               <div>
-                <h2 className="text-sm font-semibold">
-                  {ach.title}
-                </h2>
+                <h2 className="text-sm font-semibold">{ach.title}</h2>
                 <p className="text-[11px] text-slate-500 mt-1">
                   {ach.issuer} ·{" "}
                   {ach.date

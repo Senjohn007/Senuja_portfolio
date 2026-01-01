@@ -2,7 +2,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
-import { FiMoon, FiSun, FiMenu, FiX } from "react-icons/fi";
+import { FiMoon, FiSun, FiMenu, FiX, FiLock } from "react-icons/fi";
 import { motion } from "framer-motion";
 
 const sections = [
@@ -70,6 +70,15 @@ function Navbar() {
             </motion.button>
           ))}
 
+          {/* Admin entry (desktop) */}
+          <Link
+            to="/admin/login"
+            className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-[11px] font-medium text-slate-600 transition-colors hover:border-sky-500 hover:text-sky-600 dark:border-slate-700 dark:text-slate-300 dark:hover:border-sky-400 dark:hover:text-sky-300"
+          >
+            <FiLock size={12} />
+            <span>Admin</span>
+          </Link>
+
           <button
             type="button"
             onClick={toggleTheme}
@@ -82,6 +91,15 @@ function Navbar() {
 
         {/* Mobile actions */}
         <div className="flex items-center gap-2 md:hidden">
+          {/* Admin entry (mobile icon only) */}
+          <Link
+            to="/admin/login"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+            aria-label="Admin login"
+          >
+            <FiLock size={14} />
+          </Link>
+
           <button
             type="button"
             onClick={toggleTheme}
