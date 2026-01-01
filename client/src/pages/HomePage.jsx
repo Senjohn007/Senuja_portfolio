@@ -12,6 +12,9 @@ import {
 } from "../lib/api";
 import { motion } from "framer-motion";
 
+// ⬇️ import your picture (adjust path/name as needed)
+import profileImage from "../assets/profile.jpg";
+
 const PROJECT_CATEGORIES = ["All", "Data"];
 
 const scrollToSection = (id) => {
@@ -120,13 +123,13 @@ function HomePage() {
 
             <div className="flex flex-wrap gap-3">
               <motion.a
-  whileHover={{ scale: 1.03, y: -2 }}
-  transition={{ type: "spring", stiffness: 260, damping: 20 }}
-  href="http://localhost:5000/cv.pdf"
-  className="inline-flex items-center justify-center rounded-lg bg-sky-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-sky-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
->
-  Download CV
-</motion.a>
+                whileHover={{ scale: 1.03, y: -2 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                href="http://localhost:5000/cv.pdf"
+                className="inline-flex items-center justify-center rounded-lg bg-sky-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-sky-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+              >
+                Download CV
+              </motion.a>
 
               <motion.button
                 type="button"
@@ -150,6 +153,7 @@ function HomePage() {
             </div>
           </motion.div>
 
+          {/* Right side: larger profile photo */}
           <motion.div
             className="flex-1"
             variants={sectionVariant}
@@ -157,7 +161,42 @@ function HomePage() {
             animate="visible"
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <div className="relative mx-auto max-w-xs sm:max-w-sm">
+            <div className="relative mx-auto flex max-w-xs flex-col items-center sm:max-w-md">
+              {/* Animated gradient glow behind avatar */}
+              <motion.div
+                className="pointer-events-none absolute -inset-10 rounded-full bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30 blur-3xl"
+                animate={{ scale: [1, 1.07, 1], opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              />
+
+              {/* Bigger circular avatar frame */}
+              <motion.div
+                whileHover={{ scale: 1.04, rotate: 1 }}
+                transition={{ type: "spring", stiffness: 200, damping: 18 }}
+                className="relative h-56 w-56 overflow-hidden rounded-full border-4 border-slate-100 bg-slate-900 shadow-2xl ring-4 ring-sky-500/40 dark:border-slate-800 sm:h-64 sm:w-64"
+              >
+                <img
+                  src={profileImage}
+                  alt="Senuja Masinghe"
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+        </SectionWrapper>
+
+        {/* Current focus card moved under hero, aligned with content */}
+        <SectionWrapper className="pt-0">
+          <motion.div
+            variants={sectionVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-xl"
+          >
+            <div className="relative">
               <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30 blur-2xl" />
               <div className="relative rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900/80">
                 <p className="mb-3 text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
@@ -421,9 +460,7 @@ function HomePage() {
             </p>
 
             {loading ? (
-              <p className="text-sm text-slate-500">
-                Loading achievements...
-              </p>
+              <p className="text-sm text-slate-500">Loading achievements...</p>
             ) : (
               <div className="space-y-4">
                 {achievements.map((item) => (

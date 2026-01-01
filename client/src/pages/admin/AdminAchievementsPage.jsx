@@ -12,16 +12,18 @@ function AdminAchievementsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // create form
   const [form, setForm] = useState({
     title: "",
     issuer: "",
     date: "",
-    type: "Certificate",
+    type: "Certificate", // must match enum in backend
     certificateUrl: "",
     description: "",
   });
   const [saving, setSaving] = useState(false);
 
+  // edit state
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({
     title: "",
@@ -195,8 +197,94 @@ function AdminAchievementsPage() {
         onSubmit={handleCreate}
         className="mb-6 grid gap-3 rounded-lg border border-slate-200 bg-white p-3 text-xs dark:border-slate-700 dark:bg-slate-900"
       >
-        {/* same as before */}
-        {/* ... (keep your existing create form JSX exactly as in your version) ... */}
+        <div className="grid gap-2 md:grid-cols-2">
+          <div>
+            <label className="block mb-1 font-medium">Title</label>
+            <input
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.title}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, title: e.target.value }))
+              }
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">Issuer</label>
+            <input
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.issuer}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, issuer: e.target.value }))
+              }
+              placeholder="SLIIT, Google, Hackathon name..."
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-2 md:grid-cols-3">
+          <div>
+            <label className="block mb-1 font-medium">Date</label>
+            <input
+              type="date"
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.date}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, date: e.target.value }))
+              }
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">Type</label>
+            <select
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.type}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, type: e.target.value }))
+              }
+            >
+              <option>Certificate</option>
+              <option>Award</option>
+              <option>Competition</option>
+              <option>Academic</option>
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">Certificate URL</label>
+            <input
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.certificateUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, certificateUrl: e.target.value }))
+              }
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium">Description</label>
+          <textarea
+            rows={3}
+            className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+            value={form.description}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, description: e.target.value }))
+            }
+            placeholder="Short summary of what you achieved."
+          />
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={saving}
+            className="rounded bg-sky-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-sky-700 disabled:opacity-60"
+          >
+            {saving ? "Saving..." : "Add achievement"}
+          </button>
+        </div>
       </form>
 
       {loading && (
@@ -270,7 +358,10 @@ function AdminAchievementsPage() {
                     className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
                     value={editForm.description}
                     onChange={(e) =>
-                      setEditForm((f) => ({ ...f, description: e.target.value }))
+                      setEditForm((f) => ({
+                        ...f,
+                        description: e.target.value,
+                      }))
                     }
                   />
                   <div className="flex justify-end gap-2">
