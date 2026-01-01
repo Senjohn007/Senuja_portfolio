@@ -12,10 +12,6 @@ import {
 } from "../lib/api";
 import { motion } from "framer-motion";
 
-/* =======================
-   Helpers
-======================= */
-
 const PROJECT_CATEGORIES = ["All", "Data"];
 
 const scrollToSection = (id) => {
@@ -23,21 +19,19 @@ const scrollToSection = (id) => {
   if (el) el.scrollIntoView({ behavior: "smooth" });
 };
 
-/* =======================
-   Component
-======================= */
+const sectionVariant = {
+  hidden: { opacity: 0, y: 32 },
+  visible: { opacity: 1, y: 0 },
+};
 
 function HomePage() {
-  // API data
   const [skills, setSkills] = useState([]);
   const [projects, setProjects] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // project filter
   const [activeFilter, setActiveFilter] = useState("All");
 
-  // contact form
   const [contact, setContact] = useState({
     name: "",
     email: "",
@@ -94,18 +88,19 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
       <Navbar />
 
       <main>
-        {/* ================= Hero ================= */}
+        {/* ============== Hero ============== */}
         <SectionWrapper
           id="hero"
           className="flex flex-col gap-10 md:flex-row md:items-center"
         >
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={sectionVariant}
+            initial="hidden"
+            animate="visible"
             transition={{ duration: 0.6 }}
             className="flex-1 space-y-6"
           >
@@ -113,49 +108,58 @@ function HomePage() {
               Senuja Masinghe · Data Science Undergraduate
             </p>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
               Turning data into meaningful insights.
             </h1>
 
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl">
+            <p className="max-w-xl text-sm text-slate-600 dark:text-slate-300 sm:text-base">
               3rd-year Data Science undergraduate at SLIIT with a strong
               interest in analysis, visualization, and building impactful
               data‑driven solutions using Python, SQL, and Power BI.
             </p>
 
             <div className="flex flex-wrap gap-3">
-              <a
-                href="/files/my.cv" // keep in sync with server/public filename
-                className="rounded-lg bg-sky-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-sky-700 transition"
+              <motion.a
+                whileHover={{ scale: 1.03, y: -2 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                href="/files/my.cv"
+                className="inline-flex items-center justify-center rounded-lg bg-sky-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-sky-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               >
                 Download CV
-              </a>
+              </motion.a>
 
-              <button
+              <motion.button
+                type="button"
+                whileHover={{ y: -2 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
                 onClick={() => scrollToSection("projects")}
-                className="rounded-lg border border-sky-600 px-5 py-2.5 text-sm font-medium text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-slate-900/60 transition"
+                className="inline-flex items-center justify-center rounded-lg border border-sky-600 px-5 py-2.5 text-sm font-medium text-sky-700 transition-colors hover:bg-sky-50 dark:text-sky-300 dark:hover:bg-slate-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               >
                 View projects
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                type="button"
+                whileHover={{ y: -2 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
                 onClick={() => scrollToSection("contact")}
-                className="rounded-lg border border-slate-300 dark:border-slate-700 px-5 py-2.5 text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium transition-colors hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               >
                 Contact me
-              </button>
+              </motion.button>
             </div>
           </motion.div>
 
           <motion.div
             className="flex-1"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={sectionVariant}
+            initial="hidden"
+            animate="visible"
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <div className="relative mx-auto max-w-sm">
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30 blur-2xl" />
-              <div className="relative rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 p-6 shadow-xl">
+            <div className="relative mx-auto max-w-xs sm:max-w-sm">
+              <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30 blur-2xl" />
+              <div className="relative rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900/80">
                 <p className="mb-3 text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Current focus
                 </p>
@@ -169,38 +173,37 @@ function HomePage() {
           </motion.div>
         </SectionWrapper>
 
-        {/* ================= About ================= */}
+        {/* ============== About ============== */}
         <SectionWrapper id="about">
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            variants={sectionVariant}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
-            className="grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)] items-start"
+            className="grid items-start gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)]"
           >
             <div>
               <h2 className="mb-2 text-2xl font-semibold">About</h2>
               <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
                 Data‑driven problem solver who enjoys turning messy, real‑world
-                datasets into clear stories and actionable insights. Passionate
-                about building end‑to‑end solutions, from data pipelines to
-                dashboards.
+                datasets into clear stories and actionable insights, with
+                interest in end‑to‑end solutions from pipelines to dashboards.
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                Currently studying at SLIIT, exploring statistics, machine
+                Currently studying at SLIIT and exploring statistics, machine
                 learning, and data engineering while applying them in projects
                 around education, healthcare, and productivity.
               </p>
             </div>
 
-            {/* simple vertical timeline */}
-            <div className="relative pl-4 border-l border-slate-200 dark:border-slate-700 text-xs space-y-4">
-              <div className="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-sky-500" />
+            <div className="relative space-y-4 border-l border-slate-200 pl-4 text-xs dark:border-slate-700">
+              <div className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-sky-500" />
               <div>
                 <p className="text-[11px] uppercase tracking-wide text-slate-500">
                   2022 – Present
                 </p>
-                <p className="font-semibold mt-0.5">
+                <p className="mt-0.5 font-semibold">
                   BSc (Hons) in Information Technology – Data Science
                 </p>
                 <p className="text-slate-600 dark:text-slate-300">
@@ -209,11 +212,11 @@ function HomePage() {
               </div>
 
               <div className="relative">
-                <div className="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-sky-500" />
+                <div className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-sky-500" />
                 <p className="text-[11px] uppercase tracking-wide text-slate-500">
                   2023 – Present
                 </p>
-                <p className="font-semibold mt-0.5">Hands‑on projects</p>
+                <p className="mt-0.5 font-semibold">Hands‑on projects</p>
                 <p className="text-slate-600 dark:text-slate-300">
                   Building dashboards, data pipelines, and full‑stack tools to
                   practice cloud, APIs, and analytics.
@@ -221,11 +224,11 @@ function HomePage() {
               </div>
 
               <div className="relative">
-                <div className="absolute -left-[5px] top-1 w-2 h-2 rounded-full bg-sky-500" />
+                <div className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-sky-500" />
                 <p className="text-[11px] uppercase tracking-wide text-slate-500">
                   Next
                 </p>
-                <p className="font-semibold mt-0.5">Internship & research</p>
+                <p className="mt-0.5 font-semibold">Internship &amp; research</p>
                 <p className="text-slate-600 dark:text-slate-300">
                   Looking for opportunities in data engineering, analytics, or
                   ML‑driven products.
@@ -235,15 +238,16 @@ function HomePage() {
           </motion.div>
         </SectionWrapper>
 
-        {/* ================= Projects ================= */}
+        {/* ============== Projects ============== */}
         <SectionWrapper id="projects">
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            variants={sectionVariant}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="mb-4 flex items-baseline justify-between gap-4">
+            <div className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-baseline">
               <div>
                 <h2 className="text-2xl font-semibold">Projects</h2>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
@@ -256,11 +260,12 @@ function HomePage() {
                 {PROJECT_CATEGORIES.map((cat) => (
                   <button
                     key={cat}
+                    type="button"
                     onClick={() => setActiveFilter(cat)}
-                    className={`rounded-full border px-3 py-1 text-[11px] font-medium transition ${
+                    className={`rounded-full border px-3 py-1 text-[11px] font-medium transition-colors ${
                       activeFilter === cat
                         ? "border-sky-600 bg-sky-600 text-white"
-                        : "border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        : "border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
                     }`}
                   >
                     {cat}
@@ -272,18 +277,23 @@ function HomePage() {
             {loading ? (
               <p className="text-sm text-slate-500">Loading projects...</p>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredProjects.map((project) => (
                   <motion.div
                     key={project._id}
-                    className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 hover:-translate-y-1 hover:shadow-md transition"
-                    whileHover={{ y: -4 }}
+                    whileHover={{ y: -4, scale: 1.02 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 260,
+                      damping: 20,
+                    }}
+                    className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-sky-500/80 hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
                   >
-                    <h3 className="mb-2 text-base font-semibold">
+                    <h3 className="mb-2 truncate text-base font-semibold">
                       {project.title}
                     </h3>
 
-                    <p className="mb-3 text-xs text-slate-600 dark:text-slate-300 line-clamp-3">
+                    <p className="mb-3 line-clamp-3 text-xs text-slate-600 dark:text-slate-300">
                       {project.description}
                     </p>
 
@@ -291,19 +301,21 @@ function HomePage() {
                       {project.techStack?.map((tech) => (
                         <span
                           key={tech}
-                          className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[11px]"
+                          className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200"
                         >
                           {tech}
                         </span>
                       ))}
                     </div>
 
-                    <Link
-                      to={`/projects/${project._id}`}
-                      className="text-xs font-medium text-sky-600 dark:text-sky-400 hover:underline"
-                    >
-                      View details →
-                    </Link>
+                    <div className="mt-auto pt-1">
+                      <Link
+                        to={`/projects/${project._id}`}
+                        className="text-xs font-medium text-sky-600 transition-colors hover:text-sky-500 hover:underline dark:text-sky-400"
+                      >
+                        View details →
+                      </Link>
+                    </div>
                   </motion.div>
                 ))}
               </div>
@@ -311,11 +323,12 @@ function HomePage() {
           </motion.div>
         </SectionWrapper>
 
-        {/* ================= Skills ================= */}
+        {/* ============== Skills ============== */}
         <SectionWrapper id="skills">
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            variants={sectionVariant}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
           >
@@ -329,24 +342,31 @@ function HomePage() {
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {skills.map((skill) => (
-                  <div
+                  <motion.div
                     key={skill._id || skill.name}
-                    className="flex justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs"
+                    whileHover={{ y: -2, scale: 1.01 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 260,
+                      damping: 20,
+                    }}
+                    className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs shadow-sm transition-colors hover:border-sky-500/80 dark:border-slate-800 dark:bg-slate-900"
                   >
                     <span className="font-medium">{skill.name}</span>
                     <span className="text-slate-500">{skill.category}</span>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             )}
           </motion.div>
         </SectionWrapper>
 
-        {/* ================= Achievements ================= */}
+        {/* ============== Achievements ============== */}
         <SectionWrapper id="achievements">
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            variants={sectionVariant}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
           >
@@ -362,11 +382,17 @@ function HomePage() {
             ) : (
               <div className="space-y-4">
                 {achievements.map((item) => (
-                  <div
+                  <motion.div
                     key={item._id || item.title}
-                    className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4"
+                    whileHover={{ y: -2, scale: 1.01 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 260,
+                      damping: 20,
+                    }}
+                    className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-sky-500/80 dark:border-slate-800 dark:bg-slate-900"
                   >
-                    <div className="mb-1 flex justify-between">
+                    <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
                       <h3 className="text-sm font-semibold">{item.title}</h3>
                       <span className="text-[11px] text-slate-500">
                         {item.date
@@ -380,18 +406,19 @@ function HomePage() {
                     <p className="text-xs text-slate-600 dark:text-slate-300">
                       {item.description}
                     </p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             )}
           </motion.div>
         </SectionWrapper>
 
-        {/* ================= Contact ================= */}
+        {/* ============== Contact ============== */}
         <SectionWrapper id="contact">
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            variants={sectionVariant}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
           >
@@ -414,7 +441,7 @@ function HomePage() {
                   required
                   value={contact.name}
                   onChange={handleContactChange}
-                  className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-sky-500"
+                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs outline-none transition focus-visible:ring-2 focus-visible:ring-sky-500 dark:border-slate-700 dark:bg-slate-900"
                 />
                 <input
                   type="email"
@@ -423,7 +450,7 @@ function HomePage() {
                   required
                   value={contact.email}
                   onChange={handleContactChange}
-                  className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-sky-500"
+                  className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs outline-none transition focus-visible:ring-2 focus-visible:ring-sky-500 dark:border-slate-700 dark:bg-slate-900"
                 />
               </div>
 
@@ -434,16 +461,18 @@ function HomePage() {
                 required
                 value={contact.message}
                 onChange={handleContactChange}
-                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs outline-none transition focus-visible:ring-2 focus-visible:ring-sky-500 dark:border-slate-700 dark:bg-slate-900"
               />
 
-              <button
+              <motion.button
                 type="submit"
                 disabled={sending}
-                className="rounded-lg bg-sky-600 px-5 py-2.5 text-xs font-medium text-white hover:bg-sky-700 disabled:opacity-60"
+                whileHover={!sending ? { y: -2 } : {}}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                className="inline-flex items-center justify-center rounded-lg bg-sky-600 px-5 py-2.5 text-xs font-medium text-white shadow-sm transition-colors hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               >
                 {sending ? "Sending..." : "Send message"}
-              </button>
+              </motion.button>
 
               {status && (
                 <p className="text-xs text-slate-600 dark:text-slate-300">

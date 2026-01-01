@@ -29,3 +29,8 @@ export async function getProject(id) {
   return res.data;
 }
 
+export async function fetchGithubRepos() {
+  const res = await axios.get(`${API_BASE_URL}/api/github/latest`);
+  return res.data;
+}
+

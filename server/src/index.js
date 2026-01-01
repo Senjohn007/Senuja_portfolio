@@ -1,5 +1,8 @@
 require("dotenv").config(); // loads /server/.env
 
+//github routes
+const githubRoutes = require("./routes/githubRoutes");
+
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -47,6 +50,10 @@ app.use("/api/admin/skills", skillRoutes);
 
 //admin API routes (admin auth)
 app.use('/api/admin', adminRoutes);
+
+
+// GitHub routes
+app.use("/api", githubRoutes);
 
 // start server
 const PORT = process.env.PORT || 5000;
