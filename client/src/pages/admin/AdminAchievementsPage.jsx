@@ -3,12 +3,23 @@ import { useEffect, useState } from "react";
 import {
   adminGetAchievements,
   adminDeleteAchievement,
+  adminCreateAchievement,
 } from "../../lib/adminAchievementsApi";
 
 function AdminAchievementsPage() {
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [form, setForm] = useState({
+    title: "",
+    issuer: "",
+    date: "",
+    type: "Certification",
+    certificateUrl: "",
+    description: "",
+  });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -44,12 +55,139 @@ function AdminAchievementsPage() {
     }
   };
 
+  async function handleCreate(e) {
+    e.preventDefault();
+    if (!form.title.trim()) return;
+
+    setSaving(true);
+    try {
+      const payload = {
+        title: form.title.trim(),
+        issuer: form.issuer.trim(),
+        date: form.date || null,
+        type: form.type,
+        certificateUrl: form.certificateUrl.trim() || undefined,
+        description: form.description.trim() || undefined,
+      };
+
+      const created = await adminCreateAchievement(payload);
+      setAchievements((prev) => [created, ...prev]);
+      setForm({
+        title: "",
+        issuer: "",
+        date: "",
+        type: "Certification",
+        certificateUrl: "",
+        description: "",
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create achievement.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div>
       <h1 className="text-lg font-semibold mb-3">Achievements</h1>
       <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
         Manage your achievements shown on the public portfolio.
       </p>
+
+      {/* Create form */}
+      <form
+        onSubmit={handleCreate}
+        className="mb-6 grid gap-3 rounded-lg border border-slate-200 bg-white p-3 text-xs dark:border-slate-700 dark:bg-slate-900"
+      >
+        <div className="grid gap-2 md:grid-cols-2">
+          <div>
+            <label className="block mb-1 font-medium">Title</label>
+            <input
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.title}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, title: e.target.value }))
+              }
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">Issuer</label>
+            <input
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.issuer}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, issuer: e.target.value }))
+              }
+              placeholder="SLIIT, Google, Hackathon name..."
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-2 md:grid-cols-3">
+          <div>
+            <label className="block mb-1 font-medium">Date</label>
+            <input
+              type="date"
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.date}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, date: e.target.value }))
+              }
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">Type</label>
+            <select
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.type}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, type: e.target.value }))
+              }
+            >
+              <option>Certification</option>
+              <option>Competition</option>
+              <option>Academic</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1 font-medium">Certificate URL</label>
+            <input
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.certificateUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, certificateUrl: e.target.value }))
+              }
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium">Description</label>
+          <textarea
+            rows={3}
+            className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+            value={form.description}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, description: e.target.value }))
+            }
+            placeholder="Short summary of what you achieved."
+          />
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={saving}
+            className="rounded bg-sky-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-sky-700 disabled:opacity-60"
+          >
+            {saving ? "Saving..." : "Add achievement"}
+          </button>
+        </div>
+      </form>
 
       {loading && (
         <p className="text-sm text-slate-500">Loading achievements...</p>
@@ -76,7 +214,9 @@ function AdminAchievementsPage() {
                 </h2>
                 <p className="text-[11px] text-slate-500 mt-1">
                   {ach.issuer} ·{" "}
-                  {ach.date ? new Date(ach.date).toLocaleDateString() : "No date"}
+                  {ach.date
+                    ? new Date(ach.date).toLocaleDateString()
+                    : "No date"}
                 </p>
                 <p className="text-[11px] text-slate-500 mt-1">
                   Type: {ach.type}
@@ -85,6 +225,16 @@ function AdminAchievementsPage() {
                   <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 line-clamp-2">
                     {ach.description}
                   </p>
+                )}
+                {ach.certificateUrl && (
+                  <a
+                    href={ach.certificateUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-1 inline-block text-[11px] text-sky-600 hover:underline"
+                  >
+                    View certificate
+                  </a>
                 )}
               </div>
 

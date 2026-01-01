@@ -9,7 +9,8 @@ import AdminProjectsPage from "./pages/admin/AdminProjectsPage";
 import AdminAchievementsPage from "./pages/admin/AdminAchievementsPage";
 import AdminSkillsPage from "./pages/admin/AdminSkillsPage";
 import AdminMessagesPage from "./pages/admin/AdminMessagesPage";
-
+import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 
 function App() {
@@ -19,15 +20,18 @@ function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/projects/:id" element={<ProjectDetailPage />} />
 
-      {/* Admin auth */}
+      {/* Admin auth (public) */}
       <Route path="/admin/login" element={<AdminLoginPage />} />
 
-      {/* Admin dashboard layout + nested routes */}
-      <Route path="/admin/dashboard" element={<AdminDashboardLayout />}>
-        <Route path="projects" element={<AdminProjectsPage />} />
-        <Route path="achievements" element={<AdminAchievementsPage />} />
-        <Route path="skills" element={<AdminSkillsPage />} />
-        <Route path="messages" element={<AdminMessagesPage />} />
+      {/* Protected admin dashboard */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/admin/dashboard" element={<AdminDashboardLayout />}>
+          <Route path="projects" element={<AdminProjectsPage />} />
+          <Route path="achievements" element={<AdminAchievementsPage />} />
+          <Route path="skills" element={<AdminSkillsPage />} />
+          <Route path="messages" element={<AdminMessagesPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
+        </Route>
       </Route>
     </Routes>
   );

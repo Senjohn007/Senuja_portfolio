@@ -29,4 +29,3 @@ export async function getProject(id) {
   return res.data;
 }
 
-// ❌ remove adminLogin, getAdminHeaders, adminCreateProject from here
