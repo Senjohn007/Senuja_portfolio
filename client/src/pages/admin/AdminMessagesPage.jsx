@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   adminGetMessages,
   adminMarkMessageRead,
+  adminDeleteMessage,   // 👈 new
 } from "../../lib/adminMessagesApi";
 
 function AdminMessagesPage() {
@@ -36,13 +37,24 @@ function AdminMessagesPage() {
   const handleMarkRead = async (id) => {
     try {
       const res = await adminMarkMessageRead(id);
-      const updated = res.data || res; // depending on controller response shape
+      const updated = res.data || res;
       setMessages((prev) =>
         prev.map((m) => (m._id === id ? { ...m, isRead: updated.isRead ?? true } : m))
       );
     } catch (err) {
       console.error(err);
       alert("Failed to mark message as read.");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this message?")) return;
+    try {
+      await adminDeleteMessage(id);
+      setMessages((prev) => prev.filter((m) => m._id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete message.");
     }
   };
 
@@ -62,9 +74,7 @@ function AdminMessagesPage() {
       )}
 
       {!loading && !messages.length && !error && (
-        <p className="text-sm text-slate-500">
-          No messages yet.
-        </p>
+        <p className="text-sm text-slate-500">No messages yet.</p>
       )}
 
       {!loading && messages.length > 0 && (
@@ -103,14 +113,22 @@ function AdminMessagesPage() {
                   {msg.isRead ? "Read" : "Unread"}
                 </span>
 
-                {!msg.isRead && (
+                <div className="flex gap-2">
+                  {!msg.isRead && (
+                    <button
+                      onClick={() => handleMarkRead(msg._id)}
+                      className="text-[11px] px-2 py-1 rounded bg-sky-600 text-white hover:bg-sky-700"
+                    >
+                      Mark as read
+                    </button>
+                  )}
                   <button
-                    onClick={() => handleMarkRead(msg._id)}
-                    className="text-[11px] px-2 py-1 rounded bg-sky-600 text-white hover:bg-sky-700"
+                    onClick={() => handleDelete(msg._id)}
+                    className="text-[11px] px-2 py-1 rounded bg-red-500 text-white hover:bg-red-600"
                   >
-                    Mark as read
+                    Delete
                   </button>
-                )}
+                </div>
               </div>
             </div>
           ))}

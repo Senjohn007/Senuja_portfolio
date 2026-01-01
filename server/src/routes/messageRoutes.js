@@ -5,6 +5,7 @@ const {
   createMessage,   // public: contact form
   getMessages,     // admin: list
   markMessageRead, // admin: mark as read
+  deleteMessage, // admin: delete
 } = require("../controllers/messageController");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -18,5 +19,8 @@ router.get("/", authMiddleware, getMessages);
 
 // PUT /api/admin/messages/:id
 router.put("/:id", authMiddleware, markMessageRead);
+
+// DELETE /api/admin/messages/:id
+router.delete("/:id", authMiddleware, deleteMessage); 
 
 module.exports = router;
