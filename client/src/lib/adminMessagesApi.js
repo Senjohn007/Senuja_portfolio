@@ -14,3 +14,9 @@ export async function adminMarkMessageRead(id) {
   const res = await client.put(`/api/admin/messages/${id}`);
   return res.data;
 }
+
+export async function adminDeleteMessage(id) {
+  const client = getAdminClient();
+  const res = await client.delete(`/api/admin/messages/${id}`);
+  return res.data;
+}
