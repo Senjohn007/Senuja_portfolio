@@ -20,7 +20,7 @@ const app = express();
 
 //cv files static folder
 const path = require("path");
-app.use("/files", express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(__dirname, "../public")));
 
 // middleware
 app.use(cors());
