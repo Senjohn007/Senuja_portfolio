@@ -11,12 +11,14 @@ function AdminProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // new form state
+  // form state
   const [form, setForm] = useState({
     title: "",
     description: "",
     category: "",
     techStack: "",
+    demoUrl: "",
+    repoUrl: "",
   });
   const [saving, setSaving] = useState(false);
 
@@ -56,26 +58,52 @@ function AdminProjectsPage() {
 
   async function handleCreate(e) {
     e.preventDefault();
-    if (!form.title.trim()) return;
+
+    if (!form.title.trim() || !form.description.trim() || !form.techStack.trim()) {
+      alert("Title, description and tech stack are required.");
+      return;
+    }
+
+    // category must be one of the enum values
+    const rawCategory = form.category.trim();
+    const validCategory =
+      ["Web", "Mobile", "Data", "PowerBI", "Other"].includes(rawCategory)
+        ? rawCategory
+        : "Web";
 
     setSaving(true);
     try {
       const payload = {
         title: form.title.trim(),
         description: form.description.trim(),
-        category: form.category.trim() || "General",
+        category: validCategory,
         techStack: form.techStack
           .split(",")
           .map((t) => t.trim())
           .filter(Boolean),
+        links: {
+          demo: form.demoUrl.trim() || "",
+          repo: form.repoUrl.trim(), // required
+        },
+        images: [],
+        featured: false,
       };
 
-      const created = await adminCreateProject(payload);
+      const createdRes = await adminCreateProject(payload);
+      const created = createdRes.data || createdRes;
+
       setProjects((prev) => [created, ...prev]);
-      setForm({ title: "", description: "", category: "", techStack: "" });
+      setForm({
+        title: "",
+        description: "",
+        category: "",
+        techStack: "",
+        demoUrl: "",
+        repoUrl: "",
+      });
     } catch (err) {
       console.error(err);
-      alert("Failed to create project.");
+      alert(err?.response?.data?.message || "Failed to create project.");
     } finally {
       setSaving(false);
     }
@@ -108,8 +136,10 @@ function AdminProjectsPage() {
             <input
               className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
               value={form.category}
-              onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-              placeholder="Web, Data, Mobile..."
+              onChange={(e) =>
+                setForm((f) => ({ ...f, category: e.target.value }))
+              }
+              placeholder="Web, Mobile, Data, PowerBI, Other"
             />
           </div>
         </div>
@@ -139,6 +169,34 @@ function AdminProjectsPage() {
           <p className="mt-1 text-[11px] text-slate-500">
             Comma-separated list, e.g. React, Node, MongoDB.
           </p>
+        </div>
+
+        <div className="grid gap-2 md:grid-cols-2">
+          <div>
+            <label className="mb-1 block font-medium">Demo URL</label>
+            <input
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.demoUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, demoUrl: e.target.value }))
+              }
+              placeholder="https://your-demo-link.com"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block font-medium">
+              Repo URL <span className="text-red-500">*</span>
+            </label>
+            <input
+              className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+              value={form.repoUrl}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, repoUrl: e.target.value }))
+              }
+              placeholder="https://github.com/you/project"
+              required
+            />
+          </div>
         </div>
 
         <div className="flex justify-end">
