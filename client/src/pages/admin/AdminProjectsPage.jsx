@@ -4,6 +4,7 @@ import {
   adminGetProjects,
   adminDeleteProject,
   adminCreateProject,
+  adminUpdateProject,
 } from "../../lib/adminProjectsApi";
 
 function AdminProjectsPage() {
@@ -11,7 +12,7 @@ function AdminProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // form state
+  // create form
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -21,6 +22,18 @@ function AdminProjectsPage() {
     repoUrl: "",
   });
   const [saving, setSaving] = useState(false);
+
+  // edit state
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    description: "",
+    category: "",
+    techStack: "",
+    demoUrl: "",
+    repoUrl: "",
+  });
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -64,7 +77,6 @@ function AdminProjectsPage() {
       return;
     }
 
-    // category must be one of the enum values
     const rawCategory = form.category.trim();
     const validCategory =
       ["Web", "Mobile", "Data", "PowerBI", "Other"].includes(rawCategory)
@@ -83,7 +95,7 @@ function AdminProjectsPage() {
           .filter(Boolean),
         links: {
           demo: form.demoUrl.trim() || "",
-          repo: form.repoUrl.trim(), // required
+          repo: form.repoUrl.trim(),
         },
         images: [],
         featured: false,
@@ -109,11 +121,82 @@ function AdminProjectsPage() {
     }
   }
 
+  // enter edit mode for a project
+  const startEdit = (project) => {
+    setEditingId(project._id);
+    setEditForm({
+      title: project.title || "",
+      description: project.description || "",
+      category: project.category || "",
+      techStack: (project.techStack || []).join(", "),
+      demoUrl: project.links?.demo || "",
+      repoUrl: project.links?.repo || "",
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditForm({
+      title: "",
+      description: "",
+      category: "",
+      techStack: "",
+      demoUrl: "",
+      repoUrl: "",
+    });
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!editingId) return;
+
+    if (!editForm.title.trim() || !editForm.description.trim() || !editForm.techStack.trim()) {
+      alert("Title, description and tech stack are required.");
+      return;
+    }
+
+    const rawCategory = editForm.category.trim();
+    const validCategory =
+      ["Web", "Mobile", "Data", "PowerBI", "Other"].includes(rawCategory)
+        ? rawCategory
+        : "Web";
+
+    setUpdating(true);
+    try {
+      const payload = {
+        title: editForm.title.trim(),
+        description: editForm.description.trim(),
+        category: validCategory,
+        techStack: editForm.techStack
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
+        links: {
+          demo: editForm.demoUrl.trim() || "",
+          repo: editForm.repoUrl.trim(),
+        },
+      };
+
+      const updatedRes = await adminUpdateProject(editingId, payload);
+      const updated = updatedRes.data || updatedRes;
+
+      setProjects((prev) =>
+        prev.map((p) => (p._id === editingId ? updated : p))
+      );
+      cancelEdit();
+    } catch (err) {
+      console.error(err);
+      alert(err?.response?.data?.message || "Failed to update project.");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   return (
     <div>
       <h1 className="text-lg font-semibold mb-3">Projects</h1>
       <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
-        Manage your portfolio projects here. You can add, view, and delete projects.
+        Manage your portfolio projects here. You can add, edit, and delete projects.
       </p>
 
       {/* Create form */}
@@ -210,14 +293,8 @@ function AdminProjectsPage() {
         </div>
       </form>
 
-      {loading && (
-        <p className="text-sm text-slate-500">Loading projects...</p>
-      )}
-
-      {error && (
-        <p className="mb-2 text-sm text-red-500">{error}</p>
-      )}
-
+      {loading && <p className="text-sm text-slate-500">Loading projects...</p>}
+      {error && <p className="mb-2 text-sm text-red-500">{error}</p>}
       {!loading && !projects.length && !error && (
         <p className="text-sm text-slate-500">No projects found.</p>
       )}
@@ -227,31 +304,112 @@ function AdminProjectsPage() {
           {projects.map((project) => (
             <div
               key={project._id}
-              className="flex items-start justify-between gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+              className="rounded-lg border border-slate-200 p-3 dark:border-slate-700"
             >
-              <div>
-                <h2 className="text-sm font-semibold">
-                  {project.title}
-                  {project.featured && (
-                    <span className="ml-2 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] text-amber-700">
-                      Featured
-                    </span>
-                  )}
-                </h2>
-                <p className="mt-1 line-clamp-2 text-xs text-slate-600 dark:text-slate-300">
-                  {project.description}
-                </p>
-                <p className="mt-1 text-[11px] text-slate-500">
-                  Category: {project.category}
-                </p>
-              </div>
+              {editingId === project._id ? (
+                // edit form inline
+                <form onSubmit={handleUpdate} className="space-y-2 text-xs">
+                  <div className="grid gap-2 md:grid-cols-2">
+                    <input
+                      className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
+                      value={editForm.title}
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, title: e.target.value }))
+                      }
+                    />
+                    <input
+                      className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
+                      value={editForm.category}
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, category: e.target.value }))
+                      }
+                      placeholder="Web, Mobile, Data, PowerBI, Other"
+                    />
+                  </div>
+                  <textarea
+                    rows={2}
+                    className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
+                    value={editForm.description}
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, description: e.target.value }))
+                    }
+                  />
+                  <input
+                    className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
+                    value={editForm.techStack}
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, techStack: e.target.value }))
+                    }
+                  />
+                  <div className="grid gap-2 md:grid-cols-2">
+                    <input
+                      className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
+                      value={editForm.demoUrl}
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, demoUrl: e.target.value }))
+                      }
+                    />
+                    <input
+                      className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
+                      value={editForm.repoUrl}
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, repoUrl: e.target.value }))
+                      }
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={cancelEdit}
+                      className="rounded bg-slate-200 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-100"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={updating}
+                      className="rounded bg-emerald-600 px-2 py-1 text-[11px] text-white hover:bg-emerald-700 disabled:opacity-60"
+                    >
+                      {updating ? "Saving..." : "Save"}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                // normal view
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h2 className="text-sm font-semibold">
+                      {project.title}
+                      {project.featured && (
+                        <span className="ml-2 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] text-amber-700">
+                          Featured
+                        </span>
+                      )}
+                    </h2>
+                    <p className="mt-1 line-clamp-2 text-xs text-slate-600 dark:text-slate-300">
+                      {project.description}
+                    </p>
+                    <p className="mt-1 text-[11px] text-slate-500">
+                      Category: {project.category}
+                    </p>
+                  </div>
 
-              <button
-                onClick={() => handleDelete(project._id)}
-                className="rounded bg-red-500 px-2 py-1 text-[11px] text-white hover:bg-red-600"
-              >
-                Delete
-              </button>
+                  <div className="flex flex-col gap-1">
+                    <button
+                      onClick={() => startEdit(project)}
+                      className="rounded bg-sky-600 px-2 py-1 text-[11px] text-white hover:bg-sky-700"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(project._id)}
+                      className="rounded bg-red-500 px-2 py-1 text-[11px] text-white hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
