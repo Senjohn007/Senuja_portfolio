@@ -251,8 +251,8 @@ function HomePage() {
               <div>
                 <h2 className="text-2xl font-semibold">Projects</h2>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                  Academic and self-learning projects focused on data analysis
-                  and visualization.
+                  Academic and self-learning projects focused on data analysis,
+                  visualization, and full‑stack solutions.
                 </p>
               </div>
 
@@ -278,46 +278,91 @@ function HomePage() {
               <p className="text-sm text-slate-500">Loading projects...</p>
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredProjects.map((project) => (
-                  <motion.div
-                    key={project._id}
-                    whileHover={{ y: -4, scale: 1.02 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 260,
-                      damping: 20,
-                    }}
-                    className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-sky-500/80 hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
-                  >
-                    <h3 className="mb-2 truncate text-base font-semibold">
-                      {project.title}
-                    </h3>
+                {filteredProjects.map((project) => {
+                  const thumb = project.images?.[0];
+                  const hasRepo = !!project.links?.repo;
+                  const hasDemo = !!project.links?.demo;
 
-                    <p className="mb-3 line-clamp-3 text-xs text-slate-600 dark:text-slate-300">
-                      {project.description}
-                    </p>
+                  return (
+                    <motion.article
+                      key={project._id}
+                      whileHover={{ y: -4, scale: 1.02 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 260,
+                        damping: 20,
+                      }}
+                      className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors hover:border-sky-500/80 hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
+                    >
+                      {thumb && (
+                        <div className="h-40 w-full overflow-hidden border-b border-slate-100 dark:border-slate-800">
+                          <img
+                            src={thumb}
+                            alt={project.title}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
 
-                    <div className="mb-3 flex flex-wrap gap-1.5">
-                      {project.techStack?.map((tech) => (
-                        <span
-                          key={tech}
-                          className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
+                      <div className="flex flex-1 flex-col p-4">
+                        <h3 className="mb-1 text-base font-semibold">
+                          {project.title}
+                        </h3>
+                        <p className="mb-2 text-[11px] uppercase tracking-wide text-slate-500">
+                          {project.category}
+                        </p>
 
-                    <div className="mt-auto pt-1">
-                      <Link
-                        to={`/projects/${project._id}`}
-                        className="text-xs font-medium text-sky-600 transition-colors hover:text-sky-500 hover:underline dark:text-sky-400"
-                      >
-                        View details →
-                      </Link>
-                    </div>
-                  </motion.div>
-                ))}
+                        <p className="mb-3 line-clamp-3 text-xs text-slate-600 dark:text-slate-300">
+                          {project.description}
+                        </p>
+
+                        <div className="mb-3 flex flex-wrap gap-1.5">
+                          {project.techStack?.map((tech) => (
+                            <span
+                              key={tech}
+                              className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="mt-auto flex items-center justify-between gap-2 pt-2">
+                          <Link
+                            to={`/projects/${project._id}`}
+                            className="text-xs font-medium text-sky-600 transition-colors hover:text-sky-500 hover:underline dark:text-sky-400"
+                          >
+                            View details →
+                          </Link>
+
+                          <div className="flex gap-2">
+                            {hasDemo && (
+                              <a
+                                href={project.links.demo}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="rounded-full border border-slate-300 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                              >
+                                Live demo
+                              </a>
+                            )}
+                            {hasRepo && (
+                              <a
+                                href={project.links.repo}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="rounded-full bg-slate-900 px-2 py-1 text-[11px] font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+                              >
+                                GitHub
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.article>
+                  );
+                })}
               </div>
             )}
           </motion.div>

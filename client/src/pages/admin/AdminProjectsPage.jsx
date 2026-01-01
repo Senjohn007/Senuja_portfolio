@@ -20,6 +20,7 @@ function AdminProjectsPage() {
     techStack: "",
     demoUrl: "",
     repoUrl: "",
+    imageUrl: "",
   });
   const [saving, setSaving] = useState(false);
 
@@ -32,6 +33,7 @@ function AdminProjectsPage() {
     techStack: "",
     demoUrl: "",
     repoUrl: "",
+    imageUrl: "",
   });
   const [updating, setUpdating] = useState(false);
 
@@ -97,7 +99,8 @@ function AdminProjectsPage() {
           demo: form.demoUrl.trim() || "",
           repo: form.repoUrl.trim(),
         },
-        images: [],
+        // store single image as first element
+        images: form.imageUrl.trim() ? [form.imageUrl.trim()] : [],
         featured: false,
       };
 
@@ -112,6 +115,7 @@ function AdminProjectsPage() {
         techStack: "",
         demoUrl: "",
         repoUrl: "",
+        imageUrl: "",
       });
     } catch (err) {
       console.error(err);
@@ -121,7 +125,6 @@ function AdminProjectsPage() {
     }
   }
 
-  // enter edit mode for a project
   const startEdit = (project) => {
     setEditingId(project._id);
     setEditForm({
@@ -131,6 +134,7 @@ function AdminProjectsPage() {
       techStack: (project.techStack || []).join(", "),
       demoUrl: project.links?.demo || "",
       repoUrl: project.links?.repo || "",
+      imageUrl: project.images?.[0] || "",
     });
   };
 
@@ -143,6 +147,7 @@ function AdminProjectsPage() {
       techStack: "",
       demoUrl: "",
       repoUrl: "",
+      imageUrl: "",
     });
   };
 
@@ -150,7 +155,11 @@ function AdminProjectsPage() {
     e.preventDefault();
     if (!editingId) return;
 
-    if (!editForm.title.trim() || !editForm.description.trim() || !editForm.techStack.trim()) {
+    if (
+      !editForm.title.trim() ||
+      !editForm.description.trim() ||
+      !editForm.techStack.trim()
+    ) {
       alert("Title, description and tech stack are required.");
       return;
     }
@@ -175,6 +184,7 @@ function AdminProjectsPage() {
           demo: editForm.demoUrl.trim() || "",
           repo: editForm.repoUrl.trim(),
         },
+        images: editForm.imageUrl.trim() ? [editForm.imageUrl.trim()] : [],
       };
 
       const updatedRes = await adminUpdateProject(editingId, payload);
@@ -282,6 +292,21 @@ function AdminProjectsPage() {
           </div>
         </div>
 
+        <div>
+          <label className="mb-1 block font-medium">Image URL</label>
+          <input
+            className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+            value={form.imageUrl}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, imageUrl: e.target.value }))
+            }
+            placeholder="https://your-image-host.com/thumbnail.png"
+          />
+          <p className="mt-1 text-[11px] text-slate-500">
+            Optional thumbnail or screenshot URL (first image shown on homepage).
+          </p>
+        </div>
+
         <div className="flex justify-end">
           <button
             type="submit"
@@ -307,7 +332,6 @@ function AdminProjectsPage() {
               className="rounded-lg border border-slate-200 p-3 dark:border-slate-700"
             >
               {editingId === project._id ? (
-                // edit form inline
                 <form onSubmit={handleUpdate} className="space-y-2 text-xs">
                   <div className="grid gap-2 md:grid-cols-2">
                     <input
@@ -357,6 +381,14 @@ function AdminProjectsPage() {
                       }
                     />
                   </div>
+                  <input
+                    className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
+                    value={editForm.imageUrl}
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, imageUrl: e.target.value }))
+                    }
+                    placeholder="Thumbnail image URL"
+                  />
                   <div className="flex justify-end gap-2">
                     <button
                       type="button"
@@ -375,7 +407,6 @@ function AdminProjectsPage() {
                   </div>
                 </form>
               ) : (
-                // normal view
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h2 className="text-sm font-semibold">
