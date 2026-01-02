@@ -21,6 +21,9 @@ function AdminProjectsPage() {
     demoUrl: "",
     repoUrl: "",
     imageUrl: "",
+    problem: "",
+    features: "",
+    learnings: "",
   });
   const [saving, setSaving] = useState(false);
 
@@ -34,6 +37,9 @@ function AdminProjectsPage() {
     demoUrl: "",
     repoUrl: "",
     imageUrl: "",
+    problem: "",
+    features: "",
+    learnings: "",
   });
   const [updating, setUpdating] = useState(false);
 
@@ -85,6 +91,19 @@ function AdminProjectsPage() {
         ? rawCategory
         : "Web";
 
+    // convert features textarea to array
+    const featuresArray = form.features
+      .split(/\r?\n|,/)
+      .map((f) => f.trim())
+      .filter(Boolean);
+
+    // normalize image path
+    const rawImage = form.imageUrl.trim();
+    const normalizedImage =
+      rawImage && !rawImage.startsWith("http") && !rawImage.startsWith("/")
+        ? `/${rawImage}`
+        : rawImage;
+
     setSaving(true);
     try {
       const payload = {
@@ -99,9 +118,11 @@ function AdminProjectsPage() {
           demo: form.demoUrl.trim() || "",
           repo: form.repoUrl.trim(),
         },
-        // store single image as first element
-        images: form.imageUrl.trim() ? [form.imageUrl.trim()] : [],
+        images: normalizedImage ? [normalizedImage] : [],
         featured: false,
+        problem: form.problem.trim(),
+        features: featuresArray,
+        learnings: form.learnings.trim(),
       };
 
       const createdRes = await adminCreateProject(payload);
@@ -116,6 +137,9 @@ function AdminProjectsPage() {
         demoUrl: "",
         repoUrl: "",
         imageUrl: "",
+        problem: "",
+        features: "",
+        learnings: "",
       });
     } catch (err) {
       console.error(err);
@@ -135,6 +159,9 @@ function AdminProjectsPage() {
       demoUrl: project.links?.demo || "",
       repoUrl: project.links?.repo || "",
       imageUrl: project.images?.[0] || "",
+      problem: project.problem || "",
+      features: (project.features || []).join("\n"),
+      learnings: project.learnings || "",
     });
   };
 
@@ -148,6 +175,9 @@ function AdminProjectsPage() {
       demoUrl: "",
       repoUrl: "",
       imageUrl: "",
+      problem: "",
+      features: "",
+      learnings: "",
     });
   };
 
@@ -170,6 +200,18 @@ function AdminProjectsPage() {
         ? rawCategory
         : "Web";
 
+    const featuresArray = editForm.features
+      .split(/\r?\n|,/)
+      .map((f) => f.trim())
+      .filter(Boolean);
+
+    // normalize image path
+    const rawImage = editForm.imageUrl.trim();
+    const normalizedImage =
+      rawImage && !rawImage.startsWith("http") && !rawImage.startsWith("/")
+        ? `/${rawImage}`
+        : rawImage;
+
     setUpdating(true);
     try {
       const payload = {
@@ -184,7 +226,10 @@ function AdminProjectsPage() {
           demo: editForm.demoUrl.trim() || "",
           repo: editForm.repoUrl.trim(),
         },
-        images: editForm.imageUrl.trim() ? [editForm.imageUrl.trim()] : [],
+        images: normalizedImage ? [normalizedImage] : [],
+        problem: editForm.problem.trim(),
+        features: featuresArray,
+        learnings: editForm.learnings.trim(),
       };
 
       const updatedRes = await adminUpdateProject(editingId, payload);
@@ -246,6 +291,53 @@ function AdminProjectsPage() {
             onChange={(e) =>
               setForm((f) => ({ ...f, description: e.target.value }))
             }
+          />
+        </div>
+
+        {/* Problem */}
+        <div>
+          <label className="mb-1 block font-medium">Problem</label>
+          <textarea
+            rows={3}
+            className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+            value={form.problem}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, problem: e.target.value }))
+            }
+            placeholder="Describe the real-world problem this project solves."
+          />
+        </div>
+
+        {/* Features / Solution */}
+        <div>
+          <label className="mb-1 block font-medium">Features / Solution</label>
+          <textarea
+            rows={3}
+            className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+            value={form.features}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, features: e.target.value }))
+            }
+            placeholder={
+              "One feature per line, e.g.\nDashboard for real-time stats\nJWT-based authentication\nRole-based access control"
+            }
+          />
+          <p className="mt-1 text-[11px] text-slate-500">
+            Each line becomes one bullet point in the Solution & features section.
+          </p>
+        </div>
+
+        {/* Challenges & Learnings */}
+        <div>
+          <label className="mb-1 block font-medium">Challenges & learnings</label>
+          <textarea
+            rows={3}
+            className="w-full rounded border border-slate-300 bg-white px-2 py-1 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-950"
+            value={form.learnings}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, learnings: e.target.value }))
+            }
+            placeholder="Summarize key implementation challenges and what you learned."
           />
         </div>
 
@@ -358,6 +450,37 @@ function AdminProjectsPage() {
                       setEditForm((f) => ({ ...f, description: e.target.value }))
                     }
                   />
+
+                  <textarea
+                    rows={2}
+                    className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
+                    value={editForm.problem}
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, problem: e.target.value }))
+                    }
+                    placeholder="Problem statement"
+                  />
+
+                  <textarea
+                    rows={2}
+                    className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
+                    value={editForm.features}
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, features: e.target.value }))
+                    }
+                    placeholder="One feature per line"
+                  />
+
+                  <textarea
+                    rows={2}
+                    className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
+                    value={editForm.learnings}
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, learnings: e.target.value }))
+                    }
+                    placeholder="Challenges & learnings"
+                  />
+
                   <input
                     className="w-full rounded border border-slate-300 bg-white px-2 py-1 dark:border-slate-700 dark:bg-slate-950"
                     value={editForm.techStack}

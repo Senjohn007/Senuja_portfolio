@@ -1,3 +1,4 @@
+// server/src/controllers/projectController.js
 const Project = require("../models/Project");
 
 // GET /api/projects
@@ -28,7 +29,6 @@ exports.getProjects = async (req, res) => {
 };
 
 // POST /api/admin/projects
-// server/src/controllers/projectController.js
 exports.createProject = async (req, res) => {
   try {
     const {
@@ -39,6 +39,10 @@ exports.createProject = async (req, res) => {
       images,
       category,
       featured,
+      // ✅ new fields from body (all optional)
+      problem,
+      features,
+      learnings,
     } = req.body;
 
     if (!title || !description || !techStack || !links || !links.repo || !category) {
@@ -56,6 +60,10 @@ exports.createProject = async (req, res) => {
       images: images || [],
       category,
       featured: featured ?? false,
+      // ✅ persist new fields (fallbacks handled by schema defaults)
+      problem,
+      features,
+      learnings,
     });
 
     // keep this shape; frontend already handles both .data and direct
@@ -70,7 +78,6 @@ exports.createProject = async (req, res) => {
     });
   }
 };
-
 
 // PUT /api/admin/projects/:id
 exports.updateProject = async (req, res) => {

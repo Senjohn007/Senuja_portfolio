@@ -1,3 +1,4 @@
+// server/src/models/Project.js
 const mongoose = require("mongoose");
 
 const projectSchema = new mongoose.Schema(
@@ -11,6 +12,24 @@ const projectSchema = new mongoose.Schema(
     description: {
       type: String,
       required: true,
+    },
+
+    // ✅ New optional field – detailed problem statement
+    problem: {
+      type: String,
+      default: "",
+    },
+
+    // ✅ New optional field – bullet list of features/solution points
+    features: {
+      type: [String],
+      default: [],
+    },
+
+    // ✅ New optional field – challenges & learnings
+    learnings: {
+      type: String,
+      default: "",
     },
 
     techStack: {
