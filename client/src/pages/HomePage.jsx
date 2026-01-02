@@ -9,9 +9,27 @@ import {
   getAchievements,
   postMessage,
 } from "../lib/api";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Code, 
+  Database, 
+  BarChart3, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  ExternalLink, 
+  Calendar,
+  Github,
+  Linkedin,
+  Award,
+  BookOpen,
+  Briefcase,
+  ChevronRight,
+  Sparkles,
+  Zap
+} from "lucide-react";
 
-// ⬇️ import your picture (adjust path/name as needed)
+// Import your picture
 import profileImage from "../assets/profile.jpg";
 
 const PROJECT_CATEGORIES = ["All", "Data"];
@@ -32,6 +50,21 @@ const textVariant = {
 };
 
 const letterVariant = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 }
 };
@@ -104,9 +137,15 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-50">
+      {/* Background decorative elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-gradient-to-br from-sky-400/20 to-blue-600/20 blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-gradient-to-tr from-purple-400/20 to-pink-600/20 blur-3xl"></div>
+      </div>
+
       <Navbar />
 
-      <main>
+      <main className="relative z-10">
         {/* ============== Hero ============== */}
         <SectionWrapper
           id="hero"
@@ -125,7 +164,8 @@ function HomePage() {
               animate={isLoaded ? "visible" : "hidden"}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <p className="text-sm font-medium text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500">
+              <p className="text-sm font-medium text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500 flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
                 Senuja Masinghe · Data Science Undergraduate
               </p>
             </motion.div>
@@ -142,6 +182,7 @@ function HomePage() {
                   key={index}
                   variants={letterVariant}
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.03 }}
+                  className={letter === " " ? "inline-block w-2" : "inline-block"}
                 >
                   {letter}
                 </motion.span>
@@ -172,10 +213,13 @@ function HomePage() {
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 href="http://localhost:5000/cv.pdf"
-                className="relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               >
-                <span className="relative z-10">Download CV</span>
-                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-600 to-sky-500 opacity-0 transition-opacity hover:opacity-100"></div>
+                <span className="relative z-10 flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  Download CV
+                </span>
+                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-600 to-sky-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
               </motion.a>
 
               <motion.button
@@ -184,10 +228,13 @@ function HomePage() {
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 onClick={() => scrollToSection("projects")}
-                className="relative inline-flex items-center justify-center overflow-hidden rounded-lg border border-sky-500/30 bg-sky-50/50 px-5 py-2.5 text-sm font-medium text-sky-700 backdrop-blur-sm transition-all hover:bg-sky-100/70 dark:bg-sky-950/30 dark:text-sky-300 dark:hover:bg-sky-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg border border-sky-500/30 bg-sky-50/50 px-5 py-2.5 text-sm font-medium text-sky-700 backdrop-blur-sm transition-all hover:bg-sky-100/70 dark:bg-sky-950/30 dark:text-sky-300 dark:hover:bg-sky-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               >
-                <span className="relative z-10">View projects</span>
-                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-sky-500/10 to-blue-500/10 opacity-0 transition-opacity hover:opacity-100"></div>
+                <span className="relative z-10 flex items-center gap-2">
+                  <Code className="w-4 h-4" />
+                  View projects
+                </span>
+                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-sky-500/10 to-blue-500/10 opacity-0 transition-opacity group-hover:opacity-100"></div>
               </motion.button>
 
               <motion.button
@@ -196,15 +243,18 @@ function HomePage() {
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 onClick={() => scrollToSection("contact")}
-                className="relative inline-flex items-center justify-center overflow-hidden rounded-lg border border-slate-300 bg-white/50 px-5 py-2.5 text-sm font-medium backdrop-blur-sm transition-all hover:bg-slate-100/70 dark:border-slate-700 dark:bg-slate-900/50 dark:hover:bg-slate-800/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg border border-slate-300 bg-white/50 px-5 py-2.5 text-sm font-medium backdrop-blur-sm transition-all hover:bg-slate-100/70 dark:border-slate-700 dark:bg-slate-900/50 dark:hover:bg-slate-800/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               >
-                <span className="relative z-10">Contact me</span>
-                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-500/10 to-slate-600/10 opacity-0 transition-opacity hover:opacity-100"></div>
+                <span className="relative z-10 flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  Contact me
+                </span>
+                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-500/10 to-slate-600/10 opacity-0 transition-opacity group-hover:opacity-100"></div>
               </motion.button>
             </motion.div>
           </motion.div>
 
-          {/* Right side: larger profile photo with enhanced animations */}
+          {/* Right side: enhanced profile photo with more animations */}
           <motion.div
             className="flex-1"
             variants={sectionVariant}
@@ -294,25 +344,26 @@ function HomePage() {
             <div className="relative">
               <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30 blur-2xl" />
               <motion.div 
-                className="relative rounded-3xl border border-slate-200/50 bg-white/80 p-6 shadow-xl backdrop-blur-sm dark:border-slate-800/50 dark:bg-slate-900/80"
+                className="relative rounded-3xl border border-slate-200/50 glass p-6 shadow-xl"
                 whileHover={{ y: -3, boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.15)" }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
-                <p className="mb-3 text-xs font-medium uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500">
+                <p className="mb-3 text-xs font-medium uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500 flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
                   Current focus
                 </p>
-                <ul className="space-y-2 text-xs">
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-sky-500"></span>
-                    <span>Data analysis with Python &amp; Pandas</span>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <span className="mt-0.5 h-2 w-2 rounded-full bg-sky-500 flex-shrink-0"></span>
+                    <span className="text-sm">Data analysis with Python &amp; Pandas</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-violet-500"></span>
-                    <span>Interactive dashboards using Power BI</span>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-0.5 h-2 w-2 rounded-full bg-violet-500 flex-shrink-0"></span>
+                    <span className="text-sm">Interactive dashboards using Power BI</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                    <span>SQL for querying and transforming data</span>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-0.5 h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0"></span>
+                    <span className="text-sm">SQL for querying and transforming data</span>
                   </li>
                 </ul>
               </motion.div>
@@ -331,8 +382,11 @@ function HomePage() {
             className="grid items-start gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)]"
           >
             <div>
-              <h2 className="mb-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400">About</h2>
-              <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
+              <h2 className="mb-4 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+                <BookOpen className="w-6 h-6" />
+                About
+              </h2>
+              <p className="mb-4 text-sm text-slate-600 dark:text-slate-300">
                 Data‑driven problem solver who enjoys turning messy, real‑world
                 datasets into clear stories and actionable insights, with
                 interest in end‑to‑end solutions from pipelines to dashboards.
@@ -344,56 +398,67 @@ function HomePage() {
               </p>
             </div>
 
-            <div className="relative space-y-4 border-l border-slate-200/50 pl-4 text-xs dark:border-slate-700/50">
-              <div className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50" />
+            <div className="relative space-y-6">
+              {/* Timeline items with enhanced design */}
               <motion.div
-                whileHover={{ x: 3 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                whileHover={{ x: 5 }}
+                className="relative pl-8"
               >
-                <p className="text-[11px] uppercase tracking-wide text-slate-500">
+                <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50"></div>
+                <div className="absolute left-1.5 top-4 h-full w-0.5 bg-slate-200 dark:bg-slate-700"></div>
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-500 mb-1">
                   2022 – Present
                 </p>
-                <p className="mt-0.5 font-semibold">
+                <h3 className="text-sm font-semibold mb-1">
                   BSc (Hons) in Information Technology – Data Science
-                </p>
-                <p className="text-slate-600 dark:text-slate-300">
-                  Sri Lanka Institute of Information Technology (SLIIT).
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  Sri Lanka Institute of Information Technology (SLIIT)
                 </p>
               </motion.div>
 
-              <div className="relative">
-                <div className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-violet-500 shadow-lg shadow-violet-500/50" />
-                <motion.div
-                  whileHover={{ x: 3 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                >
-                  <p className="text-[11px] uppercase tracking-wide text-slate-500">
-                    2023 – Present
-                  </p>
-                  <p className="mt-0.5 font-semibold">Hands‑on projects</p>
-                  <p className="text-slate-600 dark:text-slate-300">
-                    Building dashboards, data pipelines, and full‑stack tools to
-                    practice cloud, APIs, and analytics.
-                  </p>
-                </motion.div>
-              </div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                whileHover={{ x: 5 }}
+                className="relative pl-8"
+              >
+                <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-violet-500 shadow-lg shadow-violet-500/50"></div>
+                <div className="absolute left-1.5 top-4 h-full w-0.5 bg-slate-200 dark:bg-slate-700"></div>
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-500 mb-1">
+                  2023 – Present
+                </p>
+                <h3 className="text-sm font-semibold mb-1">Hands‑on projects</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  Building dashboards, data pipelines, and full‑stack tools to
+                  practice cloud, APIs, and analytics
+                </p>
+              </motion.div>
 
-              <div className="relative">
-                <div className="absolute -left-[5px] top-1 h-2 w-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50" />
-                <motion.div
-                  whileHover={{ x: 3 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                >
-                  <p className="text-[11px] uppercase tracking-wide text-slate-500">
-                    Next
-                  </p>
-                  <p className="mt-0.5 font-semibold">Internship &amp; research</p>
-                  <p className="text-slate-600 dark:text-slate-300">
-                    Looking for opportunities in data engineering, analytics, or
-                    ML‑driven products.
-                  </p>
-                </motion.div>
-              </div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                whileHover={{ x: 5 }}
+                className="relative pl-8"
+              >
+                <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></div>
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-500 mb-1">
+                  Next
+                </p>
+                <h3 className="text-sm font-semibold mb-1">Internship &amp; research</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  Looking for opportunities in data engineering, analytics, or
+                  ML‑driven products
+                </p>
+              </motion.div>
             </div>
           </motion.div>
         </SectionWrapper>
@@ -407,9 +472,12 @@ function HomePage() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-baseline">
+            <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-baseline">
               <div>
-                <h2 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400">Projects</h2>
+                <h2 className="mb-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+                  <Code className="w-6 h-6" />
+                  Projects
+                </h2>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
                   Academic and self-learning projects focused on data analysis,
                   visualization, and full‑stack solutions.
@@ -424,7 +492,7 @@ function HomePage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setActiveFilter(cat)}
-                    className={`rounded-full border px-3 py-1 text-[11px] font-medium transition-all ${
+                    className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${
                       activeFilter === cat
                         ? "border-sky-600 bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
                         : "border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
@@ -441,7 +509,13 @@ function HomePage() {
                 <div className="h-8 w-8 rounded-full border-2 border-sky-500 border-t-transparent animate-spin"></div>
               </div>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <motion.div 
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+              >
                 {filteredProjects.map((project, index) => {
                   const thumb = project.images?.[0];
                   const hasRepo = !!project.links?.repo;
@@ -450,42 +524,39 @@ function HomePage() {
                   return (
                     <motion.article
                       key={project._id}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.3 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      variants={itemVariants}
                       whileHover={{ y: -5, scale: 1.02 }}
-                      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/50 bg-white/80 shadow-sm backdrop-blur-sm transition-all hover:border-sky-500/50 hover:shadow-xl dark:border-slate-800/50 dark:bg-slate-900/80"
+                      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/50 glass shadow-sm transition-all hover:border-sky-500/50 hover:shadow-xl"
                     >
                       {thumb && (
-                        <div className="relative h-40 w-full overflow-hidden border-b border-slate-100/50 dark:border-slate-800/50">
+                        <div className="relative h-40 w-full overflow-hidden">
                           <img
                             src={thumb}
                             alt={project.title}
                             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                             loading="lazy"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </div>
                       )}
 
                       <div className="flex flex-1 flex-col p-4">
-                        <h3 className="mb-1 text-base font-semibold">
+                        <h3 className="mb-2 text-base font-semibold">
                           {project.title}
                         </h3>
-                        <p className="mb-2 text-[11px] uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500">
+                        <p className="mb-3 text-xs uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500">
                           {project.category}
                         </p>
 
-                        <p className="mb-3 line-clamp-3 text-xs text-slate-600 dark:text-slate-300">
+                        <p className="mb-4 line-clamp-3 text-xs text-slate-600 dark:text-slate-300">
                           {project.description}
                         </p>
 
-                        <div className="mb-3 flex flex-wrap gap-1.5">
+                        <div className="mb-4 flex flex-wrap gap-1.5">
                           {project.techStack?.map((tech) => (
                             <span
                               key={tech}
-                              className="rounded-full bg-slate-100/70 px-2 py-0.5 text-[11px] text-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
+                              className="rounded-full bg-slate-100/70 px-2 py-0.5 text-xs text-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
                             >
                               {tech}
                             </span>
@@ -495,9 +566,9 @@ function HomePage() {
                         <div className="mt-auto flex items-center justify-between gap-2 pt-2">
                           <Link
                             to={`/projects/${project._id}`}
-                            className="text-xs font-medium text-sky-600 transition-colors hover:text-sky-500 hover:underline dark:text-sky-400"
+                            className="text-xs font-medium text-sky-600 transition-colors hover:text-sky-500 hover:underline dark:text-sky-400 flex items-center gap-1"
                           >
-                            View details →
+                            View details <ChevronRight className="w-3 h-3" />
                           </Link>
 
                           <div className="flex gap-2">
@@ -508,9 +579,10 @@ function HomePage() {
                                 href={project.links.demo}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="rounded-full border border-slate-300/50 bg-white/50 px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+                                className="rounded-full border border-slate-300/50 bg-white/50 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70 flex items-center gap-1"
                               >
-                                Live demo
+                                <ExternalLink className="w-3 h-3" />
+                                Live
                               </motion.a>
                             )}
                             {hasRepo && (
@@ -520,9 +592,10 @@ function HomePage() {
                                 href={project.links.repo}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="rounded-full bg-gradient-to-r from-slate-900 to-slate-700 px-2 py-1 text-[11px] font-medium text-white hover:from-slate-800 hover:to-slate-600 dark:from-slate-100 dark:to-slate-300 dark:text-slate-900 dark:hover:from-slate-200 dark:hover:to-slate-400"
+                                className="rounded-full bg-gradient-to-r from-slate-900 to-slate-700 px-2 py-1 text-xs font-medium text-white hover:from-slate-800 hover:to-slate-600 dark:from-slate-100 dark:to-slate-300 dark:text-slate-900 dark:hover:from-slate-200 dark:hover:to-slate-400 flex items-center gap-1"
                               >
-                                GitHub
+                                <Github className="w-3 h-3" />
+                                Code
                               </motion.a>
                             )}
                           </div>
@@ -531,7 +604,7 @@ function HomePage() {
                     </motion.article>
                   );
                 })}
-              </div>
+              </motion.div>
             )}
           </motion.div>
         </SectionWrapper>
@@ -545,7 +618,10 @@ function HomePage() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="mb-1 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400">Skills</h2>
+            <h2 className="mb-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+              <Database className="w-6 h-6" />
+              Skills
+            </h2>
             <p className="mb-6 text-sm text-slate-600 dark:text-slate-300">
               Core tools and concepts used in data science workflows.
             </p>
@@ -555,22 +631,25 @@ function HomePage() {
                 <div className="h-8 w-8 rounded-full border-2 border-sky-500 border-t-transparent animate-spin"></div>
               </div>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+              <motion.div 
+                className="grid gap-4 sm:grid-cols-2 md:grid-cols-3"
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+              >
                 {skills.map((skill, index) => (
                   <motion.div
                     key={skill._id || skill.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    variants={itemVariants}
                     whileHover={{ y: -3, scale: 1.02 }}
-                    className="group flex items-center justify-between rounded-xl border border-slate-200/50 bg-white/80 px-3 py-2 text-xs shadow-sm backdrop-blur-sm transition-all hover:border-sky-500/50 hover:shadow-md dark:border-slate-800/50 dark:bg-slate-900/80"
+                    className="group flex items-center justify-between rounded-xl border border-slate-200/50 glass px-4 py-3 text-xs shadow-sm transition-all hover:border-sky-500/50 hover:shadow-md"
                   >
                     <span className="font-medium">{skill.name}</span>
                     <span className="rounded-full bg-slate-100/70 px-2 py-0.5 text-slate-500 dark:bg-slate-800/70 dark:text-slate-400">{skill.category}</span>
                   </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
           </motion.div>
         </SectionWrapper>
@@ -584,7 +663,10 @@ function HomePage() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="mb-1 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400">Achievements</h2>
+            <h2 className="mb-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+              <Award className="w-6 h-6" />
+              Achievements
+            </h2>
             <p className="mb-6 text-sm text-slate-600 dark:text-slate-300">
               Academic background and certifications.
             </p>
@@ -594,26 +676,33 @@ function HomePage() {
                 <div className="h-8 w-8 rounded-full border-2 border-sky-500 border-t-transparent animate-spin"></div>
               </div>
             ) : (
-              <div className="space-y-4">
+              <motion.div 
+                className="space-y-4"
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+              >
                 {achievements.map((item, index) => (
                   <motion.div
                     key={item._id || item.title}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    variants={itemVariants}
                     whileHover={{ y: -3, x: 3 }}
-                    className="group rounded-xl border border-slate-200/50 bg-white/80 p-4 shadow-sm backdrop-blur-sm transition-all hover:border-sky-500/50 hover:shadow-md dark:border-slate-800/50 dark:bg-slate-900/80"
+                    className="group rounded-xl border border-slate-200/50 glass p-4 shadow-sm transition-all hover:border-sky-500/50 hover:shadow-md"
                   >
-                    <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
-                      <h3 className="text-sm font-semibold">{item.title}</h3>
-                      <span className="rounded-full bg-slate-100/70 px-2 py-0.5 text-[11px] text-slate-500 dark:bg-slate-800/70 dark:text-slate-400">
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                      <h3 className="text-sm font-semibold flex items-center gap-2">
+                        <Award className="w-4 h-4 text-sky-500" />
+                        {item.title}
+                      </h3>
+                      <span className="rounded-full bg-slate-100/70 px-2 py-0.5 text-xs text-slate-500 dark:bg-slate-800/70 dark:text-slate-400 flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
                         {item.date
                           ? new Date(item.date).toLocaleDateString()
                           : ""}
                       </span>
                     </div>
-                    <p className="mb-1 text-[11px] text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500">
+                    <p className="mb-2 text-xs text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500">
                       {item.issuer}
                     </p>
                     <p className="text-xs text-slate-600 dark:text-slate-300">
@@ -621,7 +710,7 @@ function HomePage() {
                     </p>
                   </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
           </motion.div>
         </SectionWrapper>
@@ -635,86 +724,180 @@ function HomePage() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="mb-1 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400">Contact</h2>
+            <h2 className="mb-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+              <Mail className="w-6 h-6" />
+              Contact
+            </h2>
             <p className="mb-6 text-sm text-slate-600 dark:text-slate-300">
               Open to internships, data-related projects, and learning
               opportunities.
             </p>
 
-            <form
-              onSubmit={handleContactSubmit}
-              className="max-w-xl space-y-4"
-              noValidate
-            >
-              <div className="grid gap-4 sm:grid-cols-2">
-                <motion.div
-                  whileFocus={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                >
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Name"
-                    required
-                    value={contact.name}
-                    onChange={handleContactChange}
-                    className="w-full rounded-lg border border-slate-300/50 bg-white/80 px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500 backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-900/80"
-                  />
-                </motion.div>
-                <motion.div
-                  whileFocus={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                >
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    required
-                    value={contact.email}
-                    onChange={handleContactChange}
-                    className="w-full rounded-lg border border-slate-300/50 bg-white/80 px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500 backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-900/80"
-                  />
-                </motion.div>
-              </div>
-
+            <div className="grid gap-8 md:grid-cols-2">
               <motion.div
-                whileFocus={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5 }}
               >
-                <textarea
-                  rows="4"
-                  name="message"
-                  placeholder="Message"
-                  required
-                  value={contact.message}
-                  onChange={handleContactChange}
-                  className="w-full rounded-lg border border-slate-300/50 bg-white/80 px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500 backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-900/80"
-                />
+                <form
+                  onSubmit={handleContactSubmit}
+                  className="space-y-4"
+                  noValidate
+                >
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <motion.div
+                      whileFocus={{ scale: 1.02 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <input
+                        type="text"
+                        name="name"
+                        placeholder="Name"
+                        required
+                        value={contact.name}
+                        onChange={handleContactChange}
+                        className="w-full rounded-lg border border-slate-300/50 glass px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
+                      />
+                    </motion.div>
+                    <motion.div
+                      whileFocus={{ scale: 1.02 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        required
+                        value={contact.email}
+                        onChange={handleContactChange}
+                        className="w-full rounded-lg border border-slate-300/50 glass px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
+                      />
+                    </motion.div>
+                  </div>
+
+                  <motion.div
+                    whileFocus={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    <textarea
+                      rows="4"
+                      name="message"
+                      placeholder="Message"
+                      required
+                      value={contact.message}
+                      onChange={handleContactChange}
+                      className="w-full rounded-lg border border-slate-300/50 glass px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
+                    />
+                  </motion.div>
+
+                  <motion.button
+                    type="submit"
+                    disabled={sending}
+                    whileHover={!sending ? { scale: 1.03, y: -2 } : {}}
+                    whileTap={!sending ? { scale: 0.98 } : {}}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-2.5 text-xs font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      {sending ? (
+                        <>
+                          <div className="h-3 w-3 rounded-full border border-white border-t-transparent animate-spin"></div>
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Mail className="w-4 h-4" />
+                          Send message
+                        </>
+                      )}
+                    </span>
+                    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-600 to-sky-500 opacity-0 transition-opacity group-hover:opacity-100 disabled:hover:opacity-0"></div>
+                  </motion.button>
+
+                  <AnimatePresence>
+                    {status && (
+                      <motion.p 
+                        className="text-xs text-slate-600 dark:text-slate-300"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {status}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </form>
               </motion.div>
 
-              <motion.button
-                type="submit"
-                disabled={sending}
-                whileHover={!sending ? { scale: 1.03, y: -2 } : {}}
-                whileTap={!sending ? { scale: 0.98 } : {}}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                className="relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-2.5 text-xs font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5 }}
+                className="space-y-4"
               >
-                <span className="relative z-10">{sending ? "Sending..." : "Send message"}</span>
-                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-600 to-sky-500 opacity-0 transition-opacity hover:opacity-100 disabled:hover:opacity-0"></div>
-              </motion.button>
+                <div className="rounded-xl border border-slate-200/50 glass p-4">
+                  <h3 className="mb-3 text-sm font-semibold">Get in touch</h3>
+                  <div className="space-y-3">
+                    <motion.a
+                      href="mailto:senujamasinghe@gmail.com"
+                      className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300 hover:text-sky-500 dark:hover:text-sky-400"
+                      whileHover={{ x: 5 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    >
+                      <Mail className="w-4 h-4" />
+                      senujamasinghe@gmail.com
+                    </motion.a>
+                    <motion.div
+                      className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300"
+                      whileHover={{ x: 5 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    >
+                      <Phone className="w-4 h-4" />
+                      +94 XX XXX XXXX
+                    </motion.div>
+                    <motion.div
+                      className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300"
+                      whileHover={{ x: 5 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    >
+                      <MapPin className="w-4 h-4" />
+                      Colombo, Sri Lanka
+                    </motion.div>
+                  </div>
+                </div>
 
-              {status && (
-                <motion.p 
-                  className="text-xs text-slate-600 dark:text-slate-300"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {status}
-                </motion.p>
-              )}
-            </form>
+                <div className="rounded-xl border border-slate-200/50 glass p-4">
+                  <h3 className="mb-3 text-sm font-semibold">Social profiles</h3>
+                  <div className="flex gap-3">
+                    <motion.a
+                      href="https://github.com/Senjohn007"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+                      whileHover={{ y: -3, scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    >
+                      <Github className="w-5 h-5" />
+                    </motion.a>
+                    <motion.a
+                      href="https://www.linkedin.com/in/senuja-masinghe-55891b36b/"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+                      whileHover={{ y: -3, scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                    >
+                      {/* LinkedIn icon would go here */}
+                    </motion.a>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </motion.div>
         </SectionWrapper>
       </main>
