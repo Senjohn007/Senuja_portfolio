@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/layouts/Navbar";
 import Footer from "../components/layouts/Footer";
 import SectionWrapper from "../components/layouts/SectionWrapper";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
+import ParticleBackground from "../components/animations/ParticleBackground";
 import {
   getSkills,
   getProjects,
   getAchievements,
   postMessage,
 } from "../lib/api";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import { 
   Code, 
   Database, 
@@ -26,7 +28,10 @@ import {
   Briefcase,
   ChevronRight,
   Sparkles,
-  Zap
+  Zap,
+  TrendingUp,
+  Instagram,
+  Facebook
 } from "lucide-react";
 
 // Import your picture
@@ -69,12 +74,81 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 }
 };
 
+// Skill Bar Component
+const SkillBar = ({ name, level, category }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, amount: 0.5 });
+  
+  useEffect(() => {
+    if (inView) {
+      setIsVisible(true);
+    }
+  }, [inView]);
+  
+  return (
+    <div ref={ref} className="mb-4">
+      <div className="flex justify-between mb-1">
+        <span className="text-sm font-medium">{name}</span>
+        <span className="text-xs text-slate-500">{level}%</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+        <motion.div
+          className="bg-gradient-to-r from-sky-500 to-blue-600 h-2.5 rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: isVisible ? `${level}%` : 0 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+        />
+      </div>
+    </div>
+  );
+};
+
+// Timeline Item Component
+const TimelineItem = ({ date, title, description, icon, color, index }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  return (
+    <motion.div
+      className="relative pl-8 mb-8"
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      whileHover={{ x: 5 }}
+    >
+      {/* Timeline dot */}
+      <motion.div
+        className={`absolute left-0 top-1.5 h-3 w-3 rounded-full bg-${color}-500 shadow-lg`}
+        animate={{ scale: isHovered ? 1.3 : 1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+      />
+      
+      {/* Timeline line */}
+      <div className="absolute left-1.5 top-4 h-full w-0.5 bg-slate-200 dark:bg-slate-700"></div>
+      
+      {/* Content */}
+      <div className="ml-4">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-500 mb-1">
+          {date}
+        </p>
+        <h3 className="text-sm font-semibold mb-1">{title}</h3>
+        <p className="text-xs text-slate-600 dark:text-slate-300">{description}</p>
+      </div>
+    </motion.div>
+  );
+};
+
 function HomePage() {
   const [skills, setSkills] = useState([]);
   const [projects, setProjects] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const [isFiltering, setIsFiltering] = useState(false);
   const [contact, setContact] = useState({
     name: "",
     email: "",
@@ -93,6 +167,7 @@ function HomePage() {
         setSkills(skillsData);
         setProjects(projectsData);
         setAchievements(achievementsData);
+        setFilteredProjects(projectsData);
       } finally {
         setLoading(false);
         setIsLoaded(true);
@@ -101,10 +176,18 @@ function HomePage() {
     load();
   }, []);
 
-  const filteredProjects =
-    activeFilter === "All"
-      ? projects
-      : projects.filter((p) => p.category === activeFilter);
+  useEffect(() => {
+    setIsFiltering(true);
+    
+    // Simulate filtering animation
+    setTimeout(() => {
+      const filtered = activeFilter === "All"
+        ? projects
+        : projects.filter((p) => p.category === activeFilter);
+      setFilteredProjects(filtered);
+      setIsFiltering(false);
+    }, 300);
+  }, [activeFilter, projects]);
 
   const handleContactChange = (e) => {
     const { name, value } = e.target;
@@ -136,12 +219,48 @@ function HomePage() {
   const titleLetters = titleText.split("");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-50">
-      {/* Background decorative elements */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-50 relative overflow-hidden">
+      {/* New: Animated Floating Background Elements (Blobs) */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-gradient-to-br from-sky-400/20 to-blue-600/20 blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-gradient-to-tr from-purple-400/20 to-pink-600/20 blur-3xl"></div>
+        {/* Blue/Sky Blob */}
+        <motion.div
+          className="absolute h-16 w-16 bg-sky-500/20 rounded-xl"
+          animate={{ 
+            x: ["-50%", "150%", "-50%"],
+            y: ["-50%", "100%", "-50%"],
+            rotate: [0, 360, 0],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          style={{ top: '10%', left: '5%' }}
+        />
+
+        {/* Violet/Purple Blob */}
+        <motion.div
+          className="absolute h-24 w-24 bg-violet-500/20 rounded-full"
+          animate={{ 
+            x: ["0%", "50%", "0%"],
+            y: ["150%", "-100%", "150%"],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
+          style={{ bottom: '10%', right: '15%' }}
+        />
+
+        {/* Emerald/Green Blob */}
+        <motion.div
+          className="absolute h-12 w-12 bg-emerald-500/20 rounded-lg"
+          animate={{ 
+            x: ["100%", "-100%", "100%"],
+            y: ["-100%", "100%", "-100%"],
+            rotate: [0, -360, 0],
+          }}
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          style={{ top: '30%', right: '10%' }}
+        />
       </div>
+      
+      {/* Particle Background */}
+      <ParticleBackground />
 
       <Navbar />
 
@@ -265,7 +384,7 @@ function HomePage() {
             <div className="relative mx-auto flex max-w-xs flex-col items-center sm:max-w-md">
               {/* Enhanced animated gradient glow behind avatar */}
               <motion.div
-                className="pointer-events-none absolute -inset-10 rounded-full bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30 blur-3xl"
+                className="pointer-events-none absolute -inset-10 rounded-full bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30"
                 animate={{ 
                   scale: [1, 1.07, 1], 
                   opacity: [0.7, 1, 0.7],
@@ -300,7 +419,7 @@ function HomePage() {
 
               {/* Floating elements around the avatar */}
               <motion.div
-                className="absolute top-10 right-10 h-6 w-6 rounded-full bg-sky-500/30 blur-md"
+                className="absolute top-10 right-10 h-6 w-6 rounded-full bg-sky-500/30"
                 animate={{
                   y: [0, -10, 0],
                   x: [0, 5, 0],
@@ -314,7 +433,7 @@ function HomePage() {
                 }}
               />
               <motion.div
-                className="absolute bottom-10 left-10 h-8 w-8 rounded-full bg-violet-500/30 blur-md"
+                className="absolute bottom-10 left-10 h-8 w-8 rounded-full bg-violet-500/30"
                 animate={{
                   y: [0, 10, 0],
                   x: [0, -5, 0],
@@ -342,9 +461,9 @@ function HomePage() {
             className="max-w-xl"
           >
             <div className="relative">
-              <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30 blur-2xl" />
+              <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30" />
               <motion.div 
-                className="relative rounded-3xl border border-slate-200/50 glass p-6 shadow-xl"
+                className="relative rounded-3xl border border-slate-200/50 glass-border-highlight p-6 shadow-xl"
                 whileHover={{ y: -3, boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.15)" }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
@@ -400,65 +519,32 @@ function HomePage() {
 
             <div className="relative space-y-6">
               {/* Timeline items with enhanced design */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                whileHover={{ x: 5 }}
-                className="relative pl-8"
-              >
-                <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50"></div>
-                <div className="absolute left-1.5 top-4 h-full w-0.5 bg-slate-200 dark:bg-slate-700"></div>
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-500 mb-1">
-                  2022 – Present
-                </p>
-                <h3 className="text-sm font-semibold mb-1">
-                  BSc (Hons) in Information Technology – Data Science
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Sri Lanka Institute of Information Technology (SLIIT)
-                </p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                whileHover={{ x: 5 }}
-                className="relative pl-8"
-              >
-                <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-violet-500 shadow-lg shadow-violet-500/50"></div>
-                <div className="absolute left-1.5 top-4 h-full w-0.5 bg-slate-200 dark:bg-slate-700"></div>
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-500 mb-1">
-                  2023 – Present
-                </p>
-                <h3 className="text-sm font-semibold mb-1">Hands‑on projects</h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Building dashboards, data pipelines, and full‑stack tools to
-                  practice cloud, APIs, and analytics
-                </p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                whileHover={{ x: 5 }}
-                className="relative pl-8"
-              >
-                <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></div>
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-500 mb-1">
-                  Next
-                </p>
-                <h3 className="text-sm font-semibold mb-1">Internship &amp; research</h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Looking for opportunities in data engineering, analytics, or
-                  ML‑driven products
-                </p>
-              </motion.div>
+              <TimelineItem
+                date="2022 – Present"
+                title="BSc (Hons) in Information Technology – Data Science"
+                description="Sri Lanka Institute of Information Technology (SLIIT)"
+                icon={<BookOpen className="w-4 h-4" />}
+                color="sky"
+                index={0}
+              />
+              
+              <TimelineItem
+                date="2023 – Present"
+                title="Hands‑on projects"
+                description="Building dashboards, data pipelines, and full‑stack tools to practice cloud, APIs, and analytics"
+                icon={<Code className="w-4 h-4" />}
+                color="violet"
+                index={1}
+              />
+              
+              <TimelineItem
+                date="Next"
+                title="Internship &amp; research"
+                description="Looking for opportunities in data engineering, analytics, or ML‑driven products"
+                icon={<Briefcase className="w-4 h-4" />}
+                color="emerald"
+                index={2}
+              />
             </div>
           </motion.div>
         </SectionWrapper>
@@ -506,104 +592,107 @@ function HomePage() {
 
             {loading ? (
               <div className="flex justify-center py-10">
-                <div className="h-8 w-8 rounded-full border-2 border-sky-500 border-t-transparent animate-spin"></div>
+                <LoadingSpinner size="lg" />
               </div>
             ) : (
               <motion.div 
                 className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.1 }}
+                layout
               >
-                {filteredProjects.map((project, index) => {
-                  const thumb = project.images?.[0];
-                  const hasRepo = !!project.links?.repo;
-                  const hasDemo = !!project.links?.demo;
+                <AnimatePresence>
+                  {filteredProjects.map((project, index) => {
+                    const thumb = project.images?.[0];
+                    const hasRepo = !!project.links?.repo;
+                    const hasDemo = !!project.links?.demo;
 
-                  return (
-                    <motion.article
-                      key={project._id}
-                      variants={itemVariants}
-                      whileHover={{ y: -5, scale: 1.02 }}
-                      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/50 glass shadow-sm transition-all hover:border-sky-500/50 hover:shadow-xl"
-                    >
-                      {thumb && (
-                        <div className="relative h-40 w-full overflow-hidden">
-                          <img
-                            src={thumb}
-                            alt={project.title}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            loading="lazy"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        </div>
-                      )}
+                    return (
+                      <motion.article
+                        key={project._id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.5 }}
+                        whileHover={{ y: -5, scale: 1.02 }}
+                        className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/50 glass-border-highlight shadow-sm transition-all hover:border-sky-500/50 hover:shadow-xl"
+                      >
+                        {thumb && (
+                          <div className="relative h-40 w-full overflow-hidden">
+                            <img
+                              src={thumb}
+                              alt={project.title}
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              loading="lazy"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          </div>
+                        )}
 
-                      <div className="flex flex-1 flex-col p-4">
-                        <h3 className="mb-2 text-base font-semibold">
-                          {project.title}
-                        </h3>
-                        <p className="mb-3 text-xs uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500">
-                          {project.category}
-                        </p>
+                        <div className="flex flex-1 flex-col p-4">
+                          <h3 className="mb-2 text-base font-semibold">
+                            {project.title}
+                          </h3>
+                          <p className="mb-3 text-xs uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500">
+                            {project.category}
+                          </p>
 
-                        <p className="mb-4 line-clamp-3 text-xs text-slate-600 dark:text-slate-300">
-                          {project.description}
-                        </p>
+                          <p className="mb-4 line-clamp-3 text-xs text-slate-600 dark:text-slate-300">
+                            {project.description}
+                          </p>
 
-                        <div className="mb-4 flex flex-wrap gap-1.5">
-                          {project.techStack?.map((tech) => (
-                            <span
-                              key={tech}
-                              className="rounded-full bg-slate-100/70 px-2 py-0.5 text-xs text-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
+                          <div className="mb-4 flex flex-wrap gap-1.5">
+                            {project.techStack?.map((tech) => (
+                              <span
+                                key={tech}
+                                className="rounded-full bg-slate-100/70 px-2 py-0.5 text-xs text-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+
+                          <div className="mt-auto flex items-center justify-between gap-2 pt-2">
+                            <Link
+                              to={`/projects/${project._id}`}
+                              className="text-xs font-medium text-sky-600 transition-colors hover:text-sky-500 hover:underline dark:text-sky-400 flex items-center gap-1"
                             >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
+                              View details <ChevronRight className="w-3 h-3" />
+                            </Link>
 
-                        <div className="mt-auto flex items-center justify-between gap-2 pt-2">
-                          <Link
-                            to={`/projects/${project._id}`}
-                            className="text-xs font-medium text-sky-600 transition-colors hover:text-sky-500 hover:underline dark:text-sky-400 flex items-center gap-1"
-                          >
-                            View details <ChevronRight className="w-3 h-3" />
-                          </Link>
-
-                          <div className="flex gap-2">
-                            {hasDemo && (
-                              <motion.a
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                href={project.links.demo}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="rounded-full border border-slate-300/50 bg-white/50 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70 flex items-center gap-1"
-                              >
-                                <ExternalLink className="w-3 h-3" />
-                                Live
-                              </motion.a>
-                            )}
-                            {hasRepo && (
-                              <motion.a
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                href={project.links.repo}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="rounded-full bg-gradient-to-r from-slate-900 to-slate-700 px-2 py-1 text-xs font-medium text-white hover:from-slate-800 hover:to-slate-600 dark:from-slate-100 dark:to-slate-300 dark:text-slate-900 dark:hover:from-slate-200 dark:hover:to-slate-400 flex items-center gap-1"
-                              >
-                                <Github className="w-3 h-3" />
-                                Code
-                              </motion.a>
-                            )}
+                            <div className="flex gap-2">
+                              {hasDemo && (
+                                <motion.a
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  href={project.links.demo}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="rounded-full border border-slate-300/50 bg-white/50 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70 flex items-center gap-1"
+                                >
+                                  <ExternalLink className="w-3 h-3" />
+                                  Live
+                                </motion.a>
+                              )}
+                              {hasRepo && (
+                                <motion.a
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  href={project.links.repo}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="rounded-full bg-gradient-to-r from-slate-900 to-slate-700 px-2 py-1 text-xs font-medium text-white hover:from-slate-800 hover:to-slate-600 dark:from-slate-100 dark:to-slate-300 dark:text-slate-900 dark:hover:from-slate-200 dark:hover:to-slate-400 flex items-center gap-1"
+                                >
+                                  <Github className="w-3 h-3" />
+                                  Code
+                                </motion.a>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </motion.article>
-                  );
-                })}
+                      </motion.article>
+                    );
+                  })}
+                </AnimatePresence>
               </motion.div>
             )}
           </motion.div>
@@ -628,7 +717,7 @@ function HomePage() {
 
             {loading ? (
               <div className="flex justify-center py-10">
-                <div className="h-8 w-8 rounded-full border-2 border-sky-500 border-t-transparent animate-spin"></div>
+                <LoadingSpinner size="lg" />
               </div>
             ) : (
               <motion.div 
@@ -643,10 +732,13 @@ function HomePage() {
                     key={skill._id || skill.name}
                     variants={itemVariants}
                     whileHover={{ y: -3, scale: 1.02 }}
-                    className="group flex items-center justify-between rounded-xl border border-slate-200/50 glass px-4 py-3 text-xs shadow-sm transition-all hover:border-sky-500/50 hover:shadow-md"
+                    className="group rounded-xl border border-slate-200/50 glass-border-highlight p-4 shadow-sm transition-all hover:border-sky-500/50 hover:shadow-md"
                   >
-                    <span className="font-medium">{skill.name}</span>
-                    <span className="rounded-full bg-slate-100/70 px-2 py-0.5 text-slate-500 dark:bg-slate-800/70 dark:text-slate-400">{skill.category}</span>
+                    <h3 className="text-sm font-medium mb-2">{skill.name}</h3>
+                    <SkillBar name={skill.name} level={skill.level || 75} category={skill.category} />
+                    <span className="rounded-full bg-slate-100/70 px-2 py-0.5 text-xs text-slate-500 dark:bg-slate-800/70 dark:text-slate-400">
+                      {skill.category}
+                    </span>
                   </motion.div>
                 ))}
               </motion.div>
@@ -673,7 +765,7 @@ function HomePage() {
 
             {loading ? (
               <div className="flex justify-center py-10">
-                <div className="h-8 w-8 rounded-full border-2 border-sky-500 border-t-transparent animate-spin"></div>
+                <LoadingSpinner size="lg" />
               </div>
             ) : (
               <motion.div 
@@ -688,7 +780,7 @@ function HomePage() {
                     key={item._id || item.title}
                     variants={itemVariants}
                     whileHover={{ y: -3, x: 3 }}
-                    className="group rounded-xl border border-slate-200/50 glass p-4 shadow-sm transition-all hover:border-sky-500/50 hover:shadow-md"
+                    className="group rounded-xl border border-slate-200/50 glass-border-highlight p-4 shadow-sm transition-all hover:border-sky-500/50 hover:shadow-md"
                   >
                     <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                       <h3 className="text-sm font-semibold flex items-center gap-2">
@@ -757,7 +849,7 @@ function HomePage() {
                         required
                         value={contact.name}
                         onChange={handleContactChange}
-                        className="w-full rounded-lg border border-slate-300/50 glass px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
+                        className="w-full rounded-lg border border-slate-300/50 glass-border-highlight px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
                       />
                     </motion.div>
                     <motion.div
@@ -771,7 +863,7 @@ function HomePage() {
                         required
                         value={contact.email}
                         onChange={handleContactChange}
-                        className="w-full rounded-lg border border-slate-300/50 glass px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
+                        className="w-full rounded-lg border border-slate-300/50 glass-border-highlight px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
                       />
                     </motion.div>
                   </div>
@@ -787,7 +879,7 @@ function HomePage() {
                       required
                       value={contact.message}
                       onChange={handleContactChange}
-                      className="w-full rounded-lg border border-slate-300/50 glass px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
+                      className="w-full rounded-lg border border-slate-300/50 glass-border-highlight px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
                     />
                   </motion.div>
 
@@ -802,7 +894,7 @@ function HomePage() {
                     <span className="relative z-10 flex items-center gap-2">
                       {sending ? (
                         <>
-                          <div className="h-3 w-3 rounded-full border border-white border-t-transparent animate-spin"></div>
+                          <LoadingSpinner size="sm" />
                           Sending...
                         </>
                       ) : (
@@ -838,7 +930,7 @@ function HomePage() {
                 transition={{ duration: 0.5 }}
                 className="space-y-4"
               >
-                <div className="rounded-xl border border-slate-200/50 glass p-4">
+                <div className="rounded-xl border border-slate-200/50 glass-border-highlight p-4">
                   <h3 className="mb-3 text-sm font-semibold">Get in touch</h3>
                   <div className="space-y-3">
                     <motion.a
@@ -856,7 +948,7 @@ function HomePage() {
                       transition={{ type: "spring", stiffness: 400, damping: 17 }}
                     >
                       <Phone className="w-4 h-4" />
-                      +94 XX XXX XXXX
+                      +94 70 236 2892 | +94 72 126 1959
                     </motion.div>
                     <motion.div
                       className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300"
@@ -864,36 +956,59 @@ function HomePage() {
                       transition={{ type: "spring", stiffness: 400, damping: 17 }}
                     >
                       <MapPin className="w-4 h-4" />
-                      Colombo, Sri Lanka
+                      Gampaha , Sri Lanka
                     </motion.div>
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200/50 glass p-4">
+                <div className="rounded-xl border border-slate-200/50 glass-border-highlight p-4">
                   <h3 className="mb-3 text-sm font-semibold">Social profiles</h3>
                   <div className="flex gap-3">
                     <motion.a
-                      href="https://github.com/Senjohn007"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
-                      whileHover={{ y: -3, scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                    >
-                      <Github className="w-5 h-5" />
-                    </motion.a>
-                    <motion.a
-                      href="https://www.linkedin.com/in/senuja-masinghe-55891b36b/"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
-                      whileHover={{ y: -3, scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                    >
-                      {/* LinkedIn icon would go here */}
-                    </motion.a>
+  href="https://github.com/Senjohn007"
+  target="_blank"
+  rel="noreferrer"
+  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+  whileHover={{ y: -3, scale: 1.1 }}
+  whileTap={{ scale: 0.95 }}
+  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+>
+  <Github className="w-5 h-5" />
+</motion.a>
+<motion.a
+  href="https://www.linkedin.com/in/senuja-masinghe-55891b36b/"
+  target="_blank"
+  rel="noreferrer"
+  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+  whileHover={{ y: -3, scale: 1.1 }}
+  whileTap={{ scale: 0.95 }}
+  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+>
+  <Linkedin className="w-5 h-5" />
+</motion.a>
+<motion.a
+  href="https://www.instagram.com/yourusername"  
+  target="_blank"
+  rel="noreferrer"
+  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+  whileHover={{ y: -3, scale: 1.1 }}
+  whileTap={{ scale: 0.95 }}
+  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+>
+  <Instagram className="w-5 h-5" />
+</motion.a>
+<motion.a
+  href="https://www.facebook.com/yourusername"  
+  target="_blank"
+  rel="noreferrer"
+  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+  whileHover={{ y: -3, scale: 1.1 }}
+  whileTap={{ scale: 0.95 }}
+  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+>
+  <Facebook className="w-5 h-5" />
+</motion.a>
+                    
                   </div>
                 </div>
               </motion.div>

@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { FiMoon, FiSun, FiMenu, FiX, FiLock } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,35 +24,66 @@ function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [activeSection, setActiveSection] = useState("hero");
+  const lastScrollY = useRef(0);
+  const scrollTimeout = useRef(null);
 
-  // Handle scroll events
+  // Handle scroll events with direction detection
   useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 10;
-      setScrolled(isScrolled);
+      const currentScrollY = window.scrollY;
+      const isScrolled = currentScrollY > 10;
+      
+      // Clear any existing timeout
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+      
+      // Debounce the scroll handler to improve performance
+      scrollTimeout.current = setTimeout(() => {
+        // Determine if we should show or hide the navbar
+        if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+          // Scrolling down and past the threshold
+          setVisible(false);
+        } else {
+          // Scrolling up or at the top
+          setVisible(true);
+        }
+        
+        // Update the scrolled state for styling
+        setScrolled(isScrolled);
+        
+        // Determine active section
+        const sections = ["hero", "projects", "skills", "achievements", "contact"];
+        const scrollPosition = currentScrollY + 100;
 
-      // Determine active section
-      const sections = ["hero", "projects", "skills", "achievements", "contact"];
-      const scrollPosition = window.scrollY + 100;
-
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (
-            scrollPosition >= offsetTop &&
-            scrollPosition < offsetTop + offsetHeight
-          ) {
-            setActiveSection(section);
-            break;
+        for (const section of sections) {
+          const element = document.getElementById(section);
+          if (element) {
+            const { offsetTop, offsetHeight } = element;
+            if (
+              scrollPosition >= offsetTop &&
+              scrollPosition < offsetTop + offsetHeight
+            ) {
+              setActiveSection(section);
+              break;
+            }
           }
         }
-      }
+        
+        // Update the last scroll position
+        lastScrollY.current = currentScrollY;
+      }, 10);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+    };
   }, []);
 
   const handleNavClick = (id) => {
@@ -85,11 +116,16 @@ function Navbar() {
   };
 
   return (
-    <header className={`sticky top-0 z-30 transition-all duration-300 ${
-      scrolled 
-        ? "glass border-b border-white/10 shadow-lg" 
-        : "border-b border-transparent"
-    }`}>
+    <motion.header 
+      className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
+        scrolled 
+          ? "glass border-b border-white/10 shadow-lg" 
+          : "border-b border-transparent"
+      }`}
+      initial={{ y: 0 }}
+      animate={{ y: visible ? 0 : -100 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+    >
       {/* Decorative gradient line at the top */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-sky-500/50 to-transparent"></div>
       
@@ -327,7 +363,7 @@ function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }
 

@@ -4,6 +4,7 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState("light");
+  const [themeTransition, setThemeTransition] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");
@@ -19,11 +20,21 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
+    
+    // Add transition class before changing theme
+    setThemeTransition(true);
+    
+    setTimeout(() => {
+      if (theme === "dark") {
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+      }
+      
+      // Remove transition class after theme change
+      setTimeout(() => setThemeTransition(false), 300);
+    }, 50);
+    
     localStorage.setItem("theme", theme);
   }, [theme]);
 
@@ -31,7 +42,7 @@ export function ThemeProvider({ children }) {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, themeTransition }}>
       {children}
     </ThemeContext.Provider>
   );
