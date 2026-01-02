@@ -12,9 +12,16 @@ import AdminMessagesPage from "./pages/admin/AdminMessagesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import { useTheme } from "./context/ThemeContext";
+
 
 function App() {
+
+   const { themeTransition } = useTheme();
+
   return (
+     <div className={`min-h-screen ${themeTransition ? 'theme-transition' : ''}`}>
+
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<HomePage />} />
@@ -34,6 +41,8 @@ function App() {
         </Route>
       </Route>
     </Routes>
+
+    </div>
   );
 }
 

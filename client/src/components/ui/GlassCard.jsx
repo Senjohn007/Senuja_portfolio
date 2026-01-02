@@ -6,8 +6,7 @@ const GlassCard = ({ children, className = '', hover = true, ...props }) => {
   return (
     <motion.div
       className={clsx(
-        'glass rounded-xl p-6',
-        hover && 'card-hover',
+        'relative overflow-hidden rounded-xl',
         className
       )}
       initial={{ opacity: 0, y: 20 }}
@@ -16,7 +15,13 @@ const GlassCard = ({ children, className = '', hover = true, ...props }) => {
       whileHover={hover ? { y: -5 } : {}}
       {...props}
     >
-      {children}
+      {/* Glassmorphism background */}
+      <div className="absolute inset-0 glass-border-highlight"></div>
+      
+      {/* Content */}
+      <div className="relative z-10 p-6">
+        {children}
+      </div>
     </motion.div>
   );
 };

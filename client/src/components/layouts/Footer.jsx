@@ -2,45 +2,69 @@ import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
+import { FaInstagram, FaFacebook } from 'react-icons/fa'; // or wherever your icons are imported from
+
 function Footer() {
   const year = new Date().getFullYear();
   const [emailHovered, setEmailHovered] = useState(false);
   const [githubHovered, setGithubHovered] = useState(false);
   const [linkedinHovered, setLinkedinHovered] = useState(false);
+  const [instagramHovered, setInstagramHovered] = useState(false);
+  const [facebookHovered, setFacebookHovered] = useState(false);
 
   // Social links data
   const socialLinks = [
-    {
-      id: 'email',
-      href: "mailto:senujamasinghe@gmail.com",
-      icon: <FaEnvelope size={14} />,
-      label: "Email",
-      hovered: emailHovered,
-      setHovered: setEmailHovered,
-      gradient: "from-sky-500 to-blue-600",
-      hoverColor: "hover:bg-sky-600"
-    },
-    {
-      id: 'github',
-      href: "https://github.com/Senjohn007",
-      icon: <FaGithub size={14} />,
-      label: "GitHub",
-      hovered: githubHovered,
-      setHovered: setGithubHovered,
-      gradient: "from-slate-700 to-slate-900",
-      hoverColor: "hover:bg-slate-900"
-    },
-    {
-      id: 'linkedin',
-      href: "https://www.linkedin.com/in/senuja-masinghe-55891b36b/",
-      icon: <FaLinkedin size={14} />,
-      label: "LinkedIn",
-      hovered: linkedinHovered,
-      setHovered: setLinkedinHovered,
-      gradient: "from-blue-500 to-blue-700",
-      hoverColor: "hover:bg-blue-600"
-    }
-  ];
+  {
+    id: 'email',
+    href: "mailto:senujamasinghe@gmail.com",
+    icon: <FaEnvelope size={14} />,
+    label: "Email",
+    hovered: emailHovered,
+    setHovered: setEmailHovered,
+    gradient: "from-sky-500 to-blue-600",
+    hoverColor: "hover:bg-sky-600"
+  },
+  {
+    id: 'github',
+    href: "https://github.com/Senjohn007",
+    icon: <FaGithub size={14} />,
+    label: "GitHub",
+    hovered: githubHovered,
+    setHovered: setGithubHovered,
+    gradient: "from-slate-700 to-slate-900",
+    hoverColor: "hover:bg-slate-900"
+  },
+  {
+    id: 'linkedin',
+    href: "https://www.linkedin.com/in/senuja-masinghe-55891b36b/",
+    icon: <FaLinkedin size={14} />,
+    label: "LinkedIn",
+    hovered: linkedinHovered,
+    setHovered: setLinkedinHovered,
+    gradient: "from-blue-500 to-blue-700",
+    hoverColor: "hover:bg-blue-600"
+  },
+  {
+    id: 'instagram',
+    href: "https://www.instagram.com/yourusername", // Replace with your Instagram URL
+    icon: <FaInstagram size={14} />,
+    label: "Instagram",
+    hovered: instagramHovered,
+    setHovered: setInstagramHovered,
+    gradient: "from-purple-500 to-pink-500",
+    hoverColor: "hover:bg-purple-600"
+  },
+  {
+    id: 'facebook',
+    href: "https://www.facebook.com/yourusername", // Replace with your Facebook URL
+    icon: <FaFacebook size={14} />,
+    label: "Facebook",
+    hovered: facebookHovered,
+    setHovered: setFacebookHovered,
+    gradient: "from-blue-600 to-blue-800",
+    hoverColor: "hover:bg-blue-700"
+  }
+];
 
   return (
     <footer className="relative mt-20 overflow-hidden">
