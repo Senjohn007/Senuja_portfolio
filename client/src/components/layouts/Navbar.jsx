@@ -87,35 +87,42 @@ function Navbar() {
   return (
     <header className={`sticky top-0 z-30 transition-all duration-300 ${
       scrolled 
-        ? "border-b border-slate-200/50 bg-white/90 backdrop-blur-md shadow-sm dark:border-slate-800/50 dark:bg-slate-950/90" 
-        : "border-b border-transparent bg-white/80 backdrop-blur-sm dark:bg-slate-950/80"
+        ? "glass border-b border-white/10 shadow-lg" 
+        : "border-b border-transparent"
     }`}>
+      {/* Decorative gradient line at the top */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-sky-500/50 to-transparent"></div>
+      
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16">
-        {/* Logo with enhanced animation */}
+        {/* Enhanced Logo with glassmorphism */}
         <Link
           to="/"
-          className="flex items-center gap-1 text-sm font-semibold tracking-tight"
+          className="group flex items-center gap-2"
         >
-          <motion.span
+          <motion.div
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            className="relative flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-br from-sky-500 to-blue-600 text-[11px] font-bold text-white shadow-lg"
+            className="relative flex h-10 w-10 items-center justify-center rounded-xl glass text-sm font-bold text-white shadow-lg"
           >
-            SM
-            <motion.span
-              className="absolute inset-0 rounded-md bg-white opacity-0"
+            <span className="bg-gradient-to-br from-sky-500 to-blue-600 bg-clip-text text-transparent">SM</span>
+            <motion.div
+              className="absolute inset-0 rounded-xl bg-white opacity-0"
               whileHover={{ opacity: 0.2 }}
               transition={{ duration: 0.2 }}
             />
-          </motion.span>
-          <span className="hidden text-xs text-slate-700 dark:text-slate-200 sm:inline">
+          </motion.div>
+          <motion.span 
+            className="hidden text-sm font-medium text-slate-700 dark:text-slate-200 sm:inline"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          >
             Senuja Masinghe
-          </span>
+          </motion.span>
         </Link>
 
-        {/* Desktop nav with enhanced styling */}
-        <div className="hidden items-center gap-5 md:flex">
+        {/* Enhanced Desktop nav with glassmorphism */}
+        <div className="hidden items-center gap-6 md:flex">
           {sections.map((s) => (
             <motion.button
               key={s.id}
@@ -124,7 +131,7 @@ function Navbar() {
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
               onClick={() => handleNavClick(s.id)}
-              className={`relative text-xs font-medium transition-colors ${
+              className={`relative px-1 py-2 text-sm font-medium transition-colors ${
                 activeSection === s.id
                   ? "text-sky-600 dark:text-sky-400"
                   : "text-slate-700 hover:text-sky-500 dark:text-slate-200 dark:hover:text-sky-400"
@@ -142,7 +149,7 @@ function Navbar() {
             </motion.button>
           ))}
 
-          {/* Admin entry (desktop) */}
+          {/* Enhanced Admin entry (desktop) */}
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -150,28 +157,51 @@ function Navbar() {
           >
             <Link
               to="/admin/login"
-              className="inline-flex items-center gap-1 rounded-md border border-slate-200/50 bg-white/50 px-2 py-1 text-[11px] font-medium text-slate-600 backdrop-blur-sm transition-all hover:border-sky-500/50 hover:bg-sky-50/70 hover:text-sky-600 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-300 dark:hover:bg-sky-950/50 dark:hover:text-sky-300"
+              className="group flex items-center gap-2 rounded-lg glass px-3 py-2 text-sm font-medium text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
             >
-              <FiLock size={12} />
+              <FiLock size={14} className="transition-transform group-hover:scale-110" />
               <span>Admin</span>
             </Link>
           </motion.div>
 
+          {/* Enhanced Theme toggle */}
           <motion.button
             type="button"
             whileHover={{ scale: 1.1, rotate: 15 }}
             whileTap={{ scale: 0.95, rotate: -15 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={toggleTheme}
-            className="relative inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200/50 bg-white/50 text-slate-700 backdrop-blur-sm transition-all hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
             aria-label="Toggle theme"
           >
-            {theme === "dark" ? <FiSun size={16} /> : <FiMoon size={16} />}
+            <AnimatePresence mode="wait">
+              {theme === "dark" ? (
+                <motion.div
+                  key="sun"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <FiSun size={18} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="moon"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <FiMoon size={18} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.button>
         </div>
 
-        {/* Mobile actions with enhanced animations */}
-        <div className="flex items-center gap-2 md:hidden">
+        {/* Enhanced Mobile actions */}
+        <div className="flex items-center gap-3 md:hidden">
           {/* Admin entry (mobile icon only) */}
           <motion.div
             whileHover={{ scale: 1.1 }}
@@ -180,32 +210,56 @@ function Navbar() {
           >
             <Link
               to="/admin/login"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200/50 bg-white/50 text-slate-600 backdrop-blur-sm transition-all hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-300 dark:hover:bg-slate-800/70"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
               aria-label="Admin login"
             >
-              <FiLock size={14} />
+              <FiLock size={16} />
             </Link>
           </motion.div>
 
+          {/* Theme toggle (mobile) */}
           <motion.button
             type="button"
             whileHover={{ scale: 1.1, rotate: 15 }}
             whileTap={{ scale: 0.95, rotate: -15 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={toggleTheme}
-            className="relative inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200/50 bg-white/50 text-slate-700 backdrop-blur-sm transition-all hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
             aria-label="Toggle theme"
           >
-            {theme === "dark" ? <FiSun size={16} /> : <FiMoon size={16} />}
+            <AnimatePresence mode="wait">
+              {theme === "dark" ? (
+                <motion.div
+                  key="sun"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <FiSun size={16} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="moon"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <FiMoon size={16} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.button>
 
+          {/* Mobile menu toggle */}
           <motion.button
             type="button"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={() => setOpen((prev) => !prev)}
-            className="relative inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200/50 bg-white/50 text-slate-700 backdrop-blur-sm transition-all hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
             aria-label="Toggle navigation"
           >
             <AnimatePresence mode="wait">
@@ -235,7 +289,7 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu with enhanced animations */}
+      {/* Enhanced Mobile menu with glassmorphism */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -243,18 +297,18 @@ function Navbar() {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="border-b border-slate-200/50 bg-white/95 backdrop-blur-md shadow-sm dark:border-slate-800/50 dark:bg-slate-950/95 md:hidden"
+            className="glass border-t border-white/10 shadow-lg md:hidden"
           >
-            <div className="flex flex-col gap-2 px-4 pb-3 pt-2">
+            <div className="flex flex-col gap-1 px-4 pb-4 pt-2">
               {sections.map((s) => (
                 <motion.button
                   key={s.id}
                   variants={mobileItemVariants}
                   type="button"
                   onClick={() => handleNavClick(s.id)}
-                  className={`relative w-full rounded-md px-2 py-2 text-left text-xs font-medium transition-colors ${
+                  className={`relative w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors ${
                     activeSection === s.id
-                      ? "bg-sky-50/70 text-sky-600 dark:bg-sky-950/50 dark:text-sky-400"
+                      ? "bg-sky-500/10 text-sky-600 dark:bg-sky-950/50 dark:text-sky-400"
                       : "text-slate-700 hover:bg-slate-100/70 dark:text-slate-200 dark:hover:bg-slate-800/70"
                   }`}
                 >
@@ -262,7 +316,7 @@ function Navbar() {
                   {activeSection === s.id && (
                     <motion.div
                       layoutId="activeMobileSection"
-                      className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-sky-500 to-blue-600"
+                      className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-sky-500 to-blue-600 rounded-r-full"
                       initial={false}
                       transition={{ type: "spring", stiffness: 500, damping: 30 }}
                     />
