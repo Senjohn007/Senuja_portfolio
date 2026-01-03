@@ -26,63 +26,58 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
   const [activeSection, setActiveSection] = useState("hero");
-  const lastScrollY = useRef(0);
-  const scrollTimeout = useRef(null);
 
-  // Handle scroll events with direction detection
+  const lastScrollY = useRef(0);
+
+  // CONFIG: tweak these for behavior
+  const HIDE_SCROLL_THRESHOLD = 120; // must be past this to hide
+  const MIN_SCROLL_DELTA = 8;       // minimum px movement to react
+
+  // Handle scroll events with direction detection (no time-based debounce)
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const isScrolled = currentScrollY > 10;
-      
-      // Clear any existing timeout
-      if (scrollTimeout.current) {
-        clearTimeout(scrollTimeout.current);
-      }
-      
-      // Debounce the scroll handler to improve performance
-      scrollTimeout.current = setTimeout(() => {
-        // Determine if we should show or hide the navbar
-        if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-          // Scrolling down and past the threshold
+
+      const diff = currentScrollY - lastScrollY.current;
+
+      // Only react if user actually moved enough pixels
+      if (Math.abs(diff) > MIN_SCROLL_DELTA) {
+        if (diff > 0 && currentScrollY > HIDE_SCROLL_THRESHOLD) {
+          // Scrolling down and past the threshold -> hide
           setVisible(false);
         } else {
-          // Scrolling up or at the top
+          // Scrolling up or near top -> show
           setVisible(true);
         }
-        
-        // Update the scrolled state for styling
-        setScrolled(isScrolled);
-        
-        // Determine active section
-        const sections = ["hero", "projects", "skills", "achievements", "contact"];
-        const scrollPosition = currentScrollY + 100;
 
-        for (const section of sections) {
-          const element = document.getElementById(section);
-          if (element) {
-            const { offsetTop, offsetHeight } = element;
-            if (
-              scrollPosition >= offsetTop &&
-              scrollPosition < offsetTop + offsetHeight
-            ) {
-              setActiveSection(section);
-              break;
-            }
+        lastScrollY.current = currentScrollY;
+      }
+
+      setScrolled(isScrolled);
+
+      // Determine active section
+      const sectionIds = ["hero", "projects", "skills", "achievements", "contact"];
+      const scrollPosition = currentScrollY + 100;
+
+      for (const section of sectionIds) {
+        const element = document.getElementById(section);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (
+            scrollPosition >= offsetTop &&
+            scrollPosition < offsetTop + offsetHeight
+          ) {
+            setActiveSection(section);
+            break;
           }
         }
-        
-        // Update the last scroll position
-        lastScrollY.current = currentScrollY;
-      }, 10);
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      if (scrollTimeout.current) {
-        clearTimeout(scrollTimeout.current);
-      }
     };
   }, []);
 
@@ -98,57 +93,56 @@ function Navbar() {
 
   const mobileMenuVariants = {
     hidden: { opacity: 0, height: 0, transition: { duration: 0.3 } },
-    visible: { 
-      opacity: 1, 
-      height: "auto", 
-      transition: { 
+    visible: {
+      opacity: 1,
+      height: "auto",
+      transition: {
         duration: 0.3,
         staggerChildren: 0.1,
-        delayChildren: 0.1
-      } 
+        delayChildren: 0.1,
+      },
     },
-    exit: { opacity: 0, height: 0, transition: { duration: 0.3 } }
+    exit: { opacity: 0, height: 0, transition: { duration: 0.3 } },
   };
 
   const mobileItemVariants = {
     hidden: { opacity: 0, x: -20 },
-    visible: { opacity: 1, x: 0 }
+    visible: { opacity: 1, x: 0 },
   };
 
   return (
-    <motion.header 
+    <motion.header
       className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
-        scrolled 
-          ? "glass border-b border-white/10 shadow-lg" 
+        scrolled
+          ? "glass border-b border-white/10 shadow-lg"
           : "border-b border-transparent"
       }`}
       initial={{ y: 0 }}
-      animate={{ y: visible ? 0 : -100 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      animate={{ y: visible ? 0 : -80 }} // translate based on visibility
+      transition={{ duration: 0.45, ease: "easeInOut" }} // slightly slower & smoother
     >
       {/* Decorative gradient line at the top */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-sky-500/50 to-transparent"></div>
-      
+
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16">
         {/* Enhanced Logo with glassmorphism */}
-        <Link
-          to="/"
-          className="group flex items-center gap-2"
-        >
+        <Link to="/" className="group flex items-center gap-2">
           <motion.div
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
             className="relative flex h-10 w-10 items-center justify-center rounded-xl glass text-sm font-bold text-white shadow-lg"
           >
-            <span className="bg-gradient-to-br from-sky-500 to-blue-600 bg-clip-text text-transparent">SM</span>
+            <span className="bg-gradient-to-br from-sky-500 to-blue-600 bg-clip-text text-transparent">
+              SM
+            </span>
             <motion.div
               className="absolute inset-0 rounded-xl bg-white opacity-0"
               whileHover={{ opacity: 0.2 }}
               transition={{ duration: 0.2 }}
             />
           </motion.div>
-          <motion.span 
+          <motion.span
             className="hidden text-sm font-medium text-slate-700 dark:text-slate-200 sm:inline"
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
@@ -184,21 +178,6 @@ function Navbar() {
               )}
             </motion.button>
           ))}
-
-          {/* Enhanced Admin entry (desktop)
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          >
-            <Link
-              to="/admin/login"
-              className="group flex items-center gap-2 rounded-lg glass px-3 py-2 text-sm font-medium text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
-            >
-              <FiLock size={14} className="transition-transform group-hover:scale-110" />
-              <span>Admin</span>
-            </Link>
-          </motion.div> */}
 
           {/* Enhanced Theme toggle */}
           <motion.button
