@@ -1,3 +1,4 @@
+// client/tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: "class",
@@ -106,6 +107,22 @@ export default {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         "noise": "url('/noise-texture.png')",
+      },
+      // Add responsive breakpoints for better mobile experience
+      screens: {
+        'xs': '475px',
+        '3xl': '1600px',
+      },
+      // Add container utilities for better responsive behavior
+      container: {
+        center: true,
+        padding: {
+          DEFAULT: '1rem',
+          sm: '2rem',
+          lg: '4rem',
+          xl: '5rem',
+          '2xl': '6rem',
+        },
       },
     },
   },
