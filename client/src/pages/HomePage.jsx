@@ -41,39 +41,119 @@ const scrollToSection = (id) => {
   if (el) el.scrollIntoView({ behavior: "smooth" });
 };
 
-// Skill Bar Component
+// Enhanced Skill Bar Component
 const SkillBar = ({ name, proficiency, category }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   
+  // Get icon and color based on category
+  const getIconInfo = () => {
+    switch (category) {
+      case "Frontend":
+        return { icon: <FiCode />, bgColor: "bg-blue-100 dark:bg-blue-900/30", iconColor: "text-blue-500" };
+      case "Backend":
+        return { icon: <FiTerminal />, bgColor: "bg-green-100 dark:bg-green-900/30", iconColor: "text-green-500" };
+      case "Tools":
+        return { icon: <FiLayers />, bgColor: "bg-purple-100 dark:bg-purple-900/30", iconColor: "text-purple-500" };
+      case "Data":
+        return { icon: <FiDatabase />, bgColor: "bg-orange-100 dark:bg-orange-900/30", iconColor: "text-orange-500" };
+      default:
+        return { icon: <FiCpu />, bgColor: "bg-gray-100 dark:bg-gray-900/30", iconColor: "text-gray-500" };
+    }
+  };
+  
+  const { icon, bgColor, iconColor } = getIconInfo();
+  
   return (
     <div ref={ref} className="mb-6">
-      <div className="flex justify-between mb-2">
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{name}</span>
-        <span className="text-xs text-slate-500 dark:text-slate-400">{proficiency}%</span>
+      <div className="flex items-center mb-3">
+        {/* Enhanced icon container with animation */}
+        <motion.div 
+          className={`flex items-center justify-center w-10 h-10 rounded-xl ${bgColor} mr-3`}
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          transition={{ type: "spring", stiffness: 300, damping: 10 }}
+        >
+          <span className={`text-xl ${iconColor}`}>{icon}</span>
+        </motion.div>
+        
+        <div className="flex-1">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{name}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">{proficiency}%</span>
+          </div>
+          
+          {/* Enhanced category badge with icon */}
+          <div className="flex items-center mt-1">
+            <motion.span 
+              className={`inline-flex items-center text-xs px-2 py-1 rounded-full ${bgColor} ${iconColor}`}
+              whileHover={{ scale: 1.05 }}
+            >
+              <span className="mr-1">{icon}</span>
+              {category}
+            </motion.span>
+          </div>
+        </div>
       </div>
-      <div className="w-full bg-slate-200/30 dark:bg-slate-700/30 rounded-full h-2.5 overflow-hidden">
+      
+      {/* Enhanced progress bar with gradient and glow effect */}
+      <div className="w-full bg-slate-200/30 dark:bg-slate-700/30 rounded-full h-3 overflow-hidden relative">
         <motion.div
           className="h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-600 relative overflow-hidden"
           initial={{ width: 0 }}
           animate={isInView ? { width: `${proficiency}%` } : { width: 0 }}
           transition={{ duration: 1.5, ease: "easeOut" }}
         >
+          {/* Animated shine effect */}
           <motion.div
-            className="absolute inset-0 bg-white opacity-30"
-            animate={{ x: ["-100%", "100%"] }}
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+            animate={{ x: ["-100%", "200%"] }}
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
           />
+          
+          {/* Glow effect for high proficiency */}
+          {proficiency >= 80 && (
+            <motion.div
+              className="absolute inset-0 bg-white/20 blur-sm"
+              animate={{ opacity: [0.3, 0.6, 0.3] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            />
+          )}
         </motion.div>
       </div>
-      <div className="flex items-center mt-2">
-        <span className="inline-block text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-          {category}
-        </span>
-        {category === "Frontend" && <FiCode className="ml-2 w-3 h-3 text-slate-500" />}
-        {category === "Backend" && <FiTerminal className="ml-2 w-3 h-3 text-slate-500" />}
-        {category === "Tools" && <FiLayers className="ml-2 w-3 h-3 text-slate-500" />}
-        {category === "Data" && <FiDatabase className="ml-2 w-3 h-3 text-slate-500" />}
+    </div>
+  );
+};
+
+// Enhanced filter buttons with icons
+const SkillFilterButtons = ({ activeSkillFilter, setActiveSkillFilter }) => {
+  const filterOptions = [
+    { name: "All", icon: <FiLayers />, color: "bg-slate-100 dark:bg-slate-800" },
+    { name: "Frontend", icon: <FiCode />, color: "bg-blue-100 dark:bg-blue-900/30" },
+    { name: "Backend", icon: <FiTerminal />, color: "bg-green-100 dark:bg-green-900/30" },
+    { name: "Tools", icon: <FiLayers />, color: "bg-purple-100 dark:bg-purple-900/30" },
+    { name: "Data", icon: <FiDatabase />, color: "bg-orange-100 dark:bg-orange-900/30" }
+  ];
+
+  return (
+    <div className="flex justify-center mb-8">
+      <div className="inline-flex rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass p-1">
+        {filterOptions.map((filter) => (
+          <motion.button
+            key={filter.name}
+            type="button"
+            onClick={() => setActiveSkillFilter(filter.name)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              activeSkillFilter === filter.name
+                ? "bg-sky-500 text-white shadow-md shadow-sky-500/25"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
+            }`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <span className="text-base">{filter.icon}</span>
+            {filter.name}
+          </motion.button>
+        ))}
       </div>
     </div>
   );
@@ -745,26 +825,11 @@ function HomePage() {
               </p>
             </motion.div>
 
-            <div className="flex justify-center mb-8">
-              <div className="inline-flex rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass p-1">
-                {["All", "Frontend", "Backend", "Tools", "Data"].map((filter) => (
-                  <motion.button
-                    key={filter}
-                    type="button"
-                    onClick={() => setActiveSkillFilter(filter)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      activeSkillFilter === filter
-                        ? "bg-sky-500 text-white shadow-md shadow-sky-500/25"
-                        : "text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {filter}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
+            {/* Enhanced filter buttons */}
+            <SkillFilterButtons 
+              activeSkillFilter={activeSkillFilter} 
+              setActiveSkillFilter={setActiveSkillFilter} 
+            />
 
             {loading ? (
               <LoadingSpinner message="Loading skills..." />
@@ -778,7 +843,7 @@ function HomePage() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     whileHover={{ y: -5 }}
-                    className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+                    className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md hover:shadow-lg transition-shadow"
                   >
                     <SkillBar name={skill.name} proficiency={skill.proficiency} category={skill.category} />
                   </motion.div>
