@@ -1,3 +1,4 @@
+// client/src/components/layouts/SectionWrapper.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
@@ -42,7 +43,7 @@ function SectionWrapper({ id, className = "", children, animation = "fade" }) {
     <motion.section
       ref={ref}
       id={id}
-      className={`py-16 md:py-24 ${className}`}
+      className={`py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24 ${className}`}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
       variants={getVariants()}

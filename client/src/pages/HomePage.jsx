@@ -91,19 +91,19 @@ const SkillBar = ({ name, proficiency, category }) => {
       <div className="flex items-center mb-3">
         {/* Enhanced icon container with animation */}
         <motion.div
-          className={`flex items-center justify-center w-10 h-10 rounded-xl ${bgColor} mr-3`}
+          className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl ${bgColor} mr-3`}
           whileHover={{ scale: 1.1, rotate: 5 }}
           transition={{ type: "spring", stiffness: 300, damping: 10 }}
         >
-          <span className={`text-xl ${iconColor}`}>{icon}</span>
+          <span className={`text-lg sm:text-xl ${iconColor}`}>{icon}</span>
         </motion.div>
 
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">
               {name}
             </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400">
+            <span className="text-xs text-slate-500 dark:text-slate-400 ml-2 flex-shrink-0">
               {proficiency}%
             </span>
           </div>
@@ -181,14 +181,14 @@ const SkillFilterButtons = ({ activeSkillFilter, setActiveSkillFilter }) => {
   ];
 
   return (
-    <div className="flex justify-center mb-8">
+    <div className="flex justify-center mb-8 overflow-x-auto pb-2 px-4 -mx-4">
       <div className="inline-flex rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass p-1">
         {filterOptions.map((filter) => (
           <motion.button
             key={filter.name}
             type="button"
             onClick={() => setActiveSkillFilter(filter.name)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
               activeSkillFilter === filter.name
                 ? "bg-sky-500 text-white shadow-md shadow-sky-500/25"
                 : "text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
@@ -196,8 +196,8 @@ const SkillFilterButtons = ({ activeSkillFilter, setActiveSkillFilter }) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className="text-base">{filter.icon}</span>
-            {filter.name}
+            <span className="text-sm sm:text-base">{filter.icon}</span>
+            <span className="hidden xs:inline">{filter.name}</span>
           </motion.button>
         ))}
       </div>
@@ -213,7 +213,7 @@ const TimelineItem = ({ date, title, description, isLast = false, icon }) => {
   return (
     <motion.div
       ref={ref}
-      className="relative pl-8 pb-8"
+      className="relative pl-6 sm:pl-8 pb-8"
       initial={{ opacity: 0, x: -20 }}
       animate={isInView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.5 }}
@@ -235,11 +235,11 @@ const TimelineItem = ({ date, title, description, isLast = false, icon }) => {
         <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1">
           {date}
         </p>
-        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2">
+        <h3 className="text-sm sm:text-base font-semibold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2">
           {icon && <span className="text-sky-500">{icon}</span>}
-          {title}
+          <span className="break-words">{title}</span>
         </h3>
-        <p className="text-sm text-slate-600 dark:text-slate-300">
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
           {description}
         </p>
       </div>
@@ -266,7 +266,7 @@ const ProjectCard = ({ project, index }) => {
       className="group relative overflow-hidden rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass shadow-md hover:shadow-xl transition-all duration-500"
     >
       {thumb && (
-        <div className="relative h-56 w-full overflow-hidden">
+        <div className="relative h-48 sm:h-56 w-full overflow-hidden">
           <img
             src={thumb}
             alt={project.title}
@@ -313,9 +313,9 @@ const ProjectCard = ({ project, index }) => {
         </div>
       )}
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100">
+          <h3 className="text-lg sm:text-xl font-semibold text-slate-800 dark:text-slate-100">
             {project.title}
           </h3>
           <motion.span
@@ -326,7 +326,7 @@ const ProjectCard = ({ project, index }) => {
           </motion.span>
         </div>
 
-        <p className="text-base text-slate-600 dark:text-slate-300 mb-4 line-clamp-3">
+        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mb-4 line-clamp-3">
           {project.description}
         </p>
 
@@ -543,17 +543,17 @@ function HomePage() {
         {/* Hero Section */}
         <SectionWrapper
           id="hero"
-          className="min-h-screen flex items-center justify-center px-4 py-20"
+          className="min-h-screen flex items-center justify-center px-4 sm:px-6 py-8 sm:py-12 md:py-16 lg:py-20"
         >
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="space-y-6"
+              className="space-y-6 text-center lg:text-left"
             >
               <motion.div
-                className="inline-flex items-center px-3 py-1 rounded-full glass text-sm font-medium text-sky-600 dark:text-sky-400"
+                className="inline-flex items-center px-3 py-1 rounded-full glass text-sm font-medium text-sky-600 dark:text-sky-400 mx-auto lg:mx-0"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
@@ -564,7 +564,7 @@ function HomePage() {
               </motion.div>
 
               <motion.h1
-                className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
@@ -576,7 +576,7 @@ function HomePage() {
               </motion.h1>
 
               <motion.p
-                className="text-lg text-slate-600 dark:text-slate-300 max-w-xl"
+                className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-xl mx-auto lg:mx-0"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
@@ -587,7 +587,7 @@ function HomePage() {
               </motion.p>
 
               <motion.div
-                className="flex flex-wrap gap-4 pt-4"
+                className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 pt-4 justify-center lg:justify-start"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
@@ -596,10 +596,10 @@ function HomePage() {
                   href="http://localhost:5000/cv.pdf"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-medium shadow-lg shadow-sky-500/25"
+                  className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-medium shadow-lg shadow-sky-500/25"
                 >
                   <FiDownload className="w-4 h-4" />
-                  Download CV
+                  <span className="text-sm sm:text-base">Download CV</span>
                 </motion.a>
 
                 <motion.button
@@ -607,10 +607,10 @@ function HomePage() {
                   onClick={() => scrollToSection("projects")}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-700 glass text-slate-700 dark:text-slate-200 font-medium"
+                  className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-700 glass text-slate-700 dark:text-slate-200 font-medium"
                 >
                   <FiLayers className="w-4 h-4" />
-                  View projects
+                  <span className="text-sm sm:text-base">View projects</span>
                   <FiArrowRight className="w-4 h-4" />
                 </motion.button>
 
@@ -619,17 +619,17 @@ function HomePage() {
                   onClick={() => scrollToSection("contact")}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-700 glass text-slate-700 dark:text-slate-200 font-medium"
+                  className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-700 glass text-slate-700 dark:text-slate-200 font-medium"
                 >
                   <FiMail className="w-4 h-4" />
-                  Contact me
+                  <span className="text-sm sm:text-base">Contact me</span>
                   <FiArrowRight className="w-4 h-4" />
                 </motion.button>
               </motion.div>
             </motion.div>
 
             <motion.div
-              className="flex items-center justify-center"
+              className="flex items-center justify-center mt-8 lg:mt-0"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -650,7 +650,7 @@ function HomePage() {
                   }}
                 />
 
-                {/* Avatar */}
+                {/* Avatar - Made responsive */}
                 <motion.div
                   whileHover={{
                     scale: 1.05,
@@ -658,7 +658,7 @@ function HomePage() {
                     boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.3)",
                   }}
                   transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                  className="relative h-96 w-96 overflow-hidden rounded-2xl border-4 border-white/50 bg-slate-900 shadow-2xl ring-4 ring-sky-500/40 backdrop-blur-sm dark:border-slate-800/50"
+                  className="relative h-48 sm:h-64 md:h-80 lg:h-96 w-48 sm:w-64 md:w-80 lg:w-96 overflow-hidden rounded-2xl border-4 border-white/50 bg-slate-900 shadow-2xl ring-4 ring-sky-500/40 backdrop-blur-sm dark:border-slate-800/50"
                 >
                   <img
                     src={profileImage}
@@ -720,21 +720,21 @@ function HomePage() {
         </SectionWrapper>
 
         {/* Current Focus Section */}
-        <SectionWrapper id="focus" className="py-20 px-4">
+        <SectionWrapper id="focus" className="px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-8 shadow-lg"
+              className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-4 sm:p-6 md:p-8 shadow-lg"
             >
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-8 flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6 sm:mb-8 flex items-center gap-2">
                 <FiTrendingUp className="text-sky-500" />
                 Current Focus
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {[
                   {
                     text: "Exploratory data analysis using Python & Pandas",
@@ -760,13 +760,13 @@ function HomePage() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     whileHover={{ x: 6 }}
-                    className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-100/40 dark:hover:bg-slate-800/40 transition-colors"
+                    className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl hover:bg-slate-100/40 dark:hover:bg-slate-800/40 transition-colors"
                   >
-                    <div className="flex-shrink-0 text-sky-500 text-xl mt-1">
+                    <div className="flex-shrink-0 text-sky-500 text-lg sm:text-xl mt-1">
                       {item.icon}
                     </div>
 
-                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                    <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
                       {item.text}
                     </p>
                   </motion.div>
@@ -777,26 +777,26 @@ function HomePage() {
         </SectionWrapper>
 
         {/* About Section */}
-        <SectionWrapper id="about" className="py-20 px-4">
+        <SectionWrapper id="about" className="px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="text-center mb-12"
+              className="text-center mb-8 sm:mb-12"
             >
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
                 About Me
               </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
                 A data-driven problem solver focused on transforming complex,
                 real-world data into meaningful insights through analysis,
                 visualization, and storytelling.
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -804,13 +804,13 @@ function HomePage() {
                 transition={{ duration: 0.5 }}
                 className="space-y-4"
               >
-                <p className="text-slate-700 dark:text-slate-300">
+                <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300">
                   I enjoy working with messy, real-world datasets and turning
                   them into clear stories and actionable insights, with a
                   growing interest in building end-to-end data solutions from
                   data pipelines and transformation to analytics and dashboards.
                 </p>
-                <p className="text-slate-700 dark:text-slate-300">
+                <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300">
                   Currently a 3rd-year Data Science undergraduate at SLIIT, I am
                   exploring statistics, machine learning, data science and data
                   engineering while applying these skills through practical
@@ -856,26 +856,26 @@ function HomePage() {
         </SectionWrapper>
 
         {/* Projects Section */}
-        <SectionWrapper id="projects" className="py-20 px-4">
+        <SectionWrapper id="projects" className="px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="text-center mb-12"
+              className="text-center mb-8 sm:mb-12"
             >
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
                 Projects
               </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
                 A collection of academic and personal projects demonstrating
                 hands-on experience in data analysis, interactive
                 visualizations, ETL pipelines and full-stack web solutions.
               </p>
             </motion.div>
 
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-8 overflow-x-auto pb-2 px-4 -mx-4">
               <div className="inline-flex rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass p-1">
                 {["All", "Web", "Mobile", "Data", "PowerBI", "Other"].map(
                   (filter) => (
@@ -883,7 +883,7 @@ function HomePage() {
                       key={filter}
                       type="button"
                       onClick={() => setActiveProjectFilter(filter)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                         activeProjectFilter === filter
                           ? "bg-sky-500 text-white shadow-md shadow-sky-500/25"
                           : "text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
@@ -901,7 +901,7 @@ function HomePage() {
             {loading ? (
               <LoadingSpinner message="Loading projects..." />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                 {filteredProjects.map((project, index) => (
                   <ProjectCard
                     key={project._id}
@@ -915,19 +915,19 @@ function HomePage() {
         </SectionWrapper>
 
         {/* Skills Section */}
-        <SectionWrapper id="skills" className="py-20 px-4">
+        <SectionWrapper id="skills" className="px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="text-center mb-12"
+              className="text-center mb-8 sm:mb-12"
             >
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
                 Skills
               </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
                 Key tools, technologies, and methodologies applied across data
                 analysis, visualization, ETL, and full-stack development
                 workflows.
@@ -943,7 +943,7 @@ function HomePage() {
             {loading ? (
               <LoadingSpinner message="Loading skills..." />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 {filteredSkills.map((skill, index) => (
                   <motion.div
                     key={skill._id || skill.name}
@@ -952,7 +952,7 @@ function HomePage() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     whileHover={{ y: -5 }}
-                    className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md hover:shadow-lg transition-shadow"
+                    className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-4 sm:p-6 shadow-md hover:shadow-lg transition-shadow"
                   >
                     <SkillBar
                       name={skill.name}
@@ -967,19 +967,19 @@ function HomePage() {
         </SectionWrapper>
 
         {/* Achievements Section */}
-        <SectionWrapper id="achievements" className="py-20 px-4">
+        <SectionWrapper id="achievements" className="px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="text-center mb-12"
+              className="text-center mb-8 sm:mb-12"
             >
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
                 Achievements
               </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
                 Academic achievements, professional certifications, and notable
                 accomplishments demonstrating hands-on skills and commitment to
                 continuous learning.
@@ -989,7 +989,7 @@ function HomePage() {
             {loading ? (
               <LoadingSpinner message="Loading achievements..." />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                 {achievements.map((item, index) => (
                   <motion.div
                     key={item._id || item.title}
@@ -998,10 +998,10 @@ function HomePage() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     whileHover={{ y: -5, scale: 1.02 }}
-                    className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+                    className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-4 sm:p-6 shadow-md"
                   >
                     <div className="flex justify-between items-start mb-3">
-                      <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
+                      <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-slate-100">
                         {item.title}
                       </h3>
                       <motion.span
@@ -1016,10 +1016,10 @@ function HomePage() {
                           : ""}
                       </motion.span>
                     </div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-2">
                       {item.issuer}
                     </p>
-                    <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-4">
                       {item.description}
                     </p>
 
@@ -1044,26 +1044,26 @@ function HomePage() {
         </SectionWrapper>
 
         {/* Contact Section */}
-        <SectionWrapper id="contact" className="py-20 px-4">
+        <SectionWrapper id="contact" className="px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="text-center mb-12"
+              className="text-center mb-8 sm:mb-12"
             >
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
                 Get In Touch
               </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-                I’m open to internships, data analytics or engineering projects,
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                I'm open to internships, data analytics or engineering projects,
                 and opportunities to apply and expand my skills in real-world
                 environments.
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -1072,15 +1072,15 @@ function HomePage() {
                 className="space-y-6"
               >
                 <motion.div
-                  className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+                  className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-4 sm:p-6 shadow-md"
                   whileHover={{ y: -5 }}
                 >
                   <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
                     Get In Touch
                   </h3>
 
-                  <form onSubmit={handleContactSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <form onSubmit={handleContactSubmit} className="space-y-4 sm:space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <div>
                         <label
                           htmlFor="name"
@@ -1096,7 +1096,7 @@ function HomePage() {
                           required
                           value={contact.name}
                           onChange={handleContactChange}
-                          className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                          className="w-full px-3 sm:px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                           whileFocus={{ scale: 1.02 }}
                         />
                       </div>
@@ -1116,7 +1116,7 @@ function HomePage() {
                           required
                           value={contact.email}
                           onChange={handleContactChange}
-                          className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                          className="w-full px-3 sm:px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                           whileFocus={{ scale: 1.02 }}
                         />
                       </div>
@@ -1137,7 +1137,7 @@ function HomePage() {
                         required
                         value={contact.message}
                         onChange={handleContactChange}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                        className="w-full px-3 sm:px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                         whileFocus={{ scale: 1.02 }}
                       />
                     </div>
@@ -1147,17 +1147,17 @@ function HomePage() {
                       disabled={sending}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-medium shadow-lg shadow-sky-500/25 disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="inline-flex items-center justify-center gap-2 w-full px-4 sm:px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-medium shadow-lg shadow-sky-500/25 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {sending ? (
                         <>
                           <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
-                          Sending...
+                          <span className="text-sm sm:text-base">Sending...</span>
                         </>
                       ) : (
                         <>
-                          <FiSend className="w-5 h-10" />
-                          Send message
+                          <FiSend className="w-5 h-5" />
+                          <span className="text-sm sm:text-base">Send message</span>
                         </>
                       )}
                     </motion.button>
@@ -1187,7 +1187,7 @@ function HomePage() {
                 className="space-y-6"
               >
                 <motion.div
-                  className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+                  className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-4 sm:p-6 shadow-md"
                   whileHover={{ y: -5 }}
                 >
                   <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
@@ -1202,14 +1202,14 @@ function HomePage() {
                       <div className="flex-shrink-0 w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
                         <FiMail className="w-4 h-4 text-sky-500" />
                       </div>
-                      senujamasinghe@gmail.com
+                      <span className="text-sm sm:text-base break-all">senujamasinghe@gmail.com</span>
                     </motion.a>
                     <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300">
                       <div className="flex-shrink-0 w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
                         <FiPhone className="w-4 h-4 text-sky-500" />
                       </div>
                       <div>
-                        <p>+94 70 236 2892 | +94 72 126 1959</p>
+                        <p className="text-sm sm:text-base">+94 70 236 2892 | +94 72 126 1959</p>
                       </div>
                     </div>
                     <p className="text-xs text-slate-400 dark:text-slate-500">
@@ -1219,19 +1219,19 @@ function HomePage() {
                       <div className="flex-shrink-0 w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
                         <FiMapPin className="w-4 h-4 text-sky-500" />
                       </div>
-                      Gampaha, Sri Lanka
+                      <span className="text-sm sm:text-base">Gampaha, Sri Lanka</span>
                     </div>
                   </div>
                 </motion.div>
 
                 <motion.div
-                  className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+                  className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-4 sm:p-6 shadow-md"
                   whileHover={{ y: -5 }}
                 >
                   <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
                     Social Profiles
                   </h3>
-                  <div className="flex gap-4">
+                  <div className="flex gap-3 sm:gap-4">
                     {/* GitHub */}
                     <motion.a
                       href="https://github.com/Senjohn007"
@@ -1239,10 +1239,10 @@ function HomePage() {
                       rel="noreferrer"
                       whileHover={{ scale: 1.1, y: -3, rotate: 5 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center justify-center w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-colors"
+                      className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-colors"
                       aria-label="GitHub"
                     >
-                      <FiGithub className="w-5 h-5" />
+                      <FiGithub className="w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.a>
 
                     {/* LinkedIn */}
@@ -1252,10 +1252,10 @@ function HomePage() {
                       rel="noreferrer"
                       whileHover={{ scale: 1.1, y: -3, rotate: -5 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center justify-center w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-600 hover:text-white transition-colors"
+                      className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-600 hover:text-white transition-colors"
                       aria-label="LinkedIn"
                     >
-                      <FiLinkedin className="w-5 h-5" />
+                      <FiLinkedin className="w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.a>
 
                     {/* Instagram */}
@@ -1265,10 +1265,10 @@ function HomePage() {
                       rel="noreferrer"
                       whileHover={{ scale: 1.1, y: -3, rotate: 5 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center justify-center w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-pink-500 hover:text-white transition-colors"
+                      className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-pink-500 hover:text-white transition-colors"
                       aria-label="Instagram"
                     >
-                      <FiInstagram className="w-5 h-5" />
+                      <FiInstagram className="w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.a>
 
                     {/* Facebook */}
@@ -1278,10 +1278,10 @@ function HomePage() {
                       rel="noreferrer"
                       whileHover={{ scale: 1.1, y: -3, rotate: -5 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center justify-center w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-700 hover:text-white transition-colors"
+                      className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-700 hover:text-white transition-colors"
                       aria-label="Facebook"
                     >
-                      <FiFacebook className="w-5 h-5" />
+                      <FiFacebook className="w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.a>
 
                     {/* Gmail / Email */}
@@ -1291,10 +1291,10 @@ function HomePage() {
                       rel="noreferrer"
                       whileHover={{ scale: 1.1, y: -3, rotate: 5 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center justify-center w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-red-500 hover:text-white transition-colors"
+                      className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-red-500 hover:text-white transition-colors"
                       aria-label="Email"
                     >
-                      <FiMail className="w-5 h-5" />
+                      <FiMail className="w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.a>
                   </div>
                 </motion.div>
