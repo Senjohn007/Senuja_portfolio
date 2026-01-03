@@ -218,7 +218,7 @@ const ProjectCard = ({ project, index }) => {
       className="group relative overflow-hidden rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass shadow-md hover:shadow-xl transition-all duration-500"
     >
       {thumb && (
-        <div className="relative h-48 w-full overflow-hidden">
+        <div className="relative h-56 w-full overflow-hidden">
           <img
             src={thumb}
             alt={project.title}
@@ -267,7 +267,7 @@ const ProjectCard = ({ project, index }) => {
 
       <div className="p-6">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{project.title}</h3>
+          <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{project.title}</h3>
           <motion.span 
             className="text-xs px-2 py-1 rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400"
             whileHover={{ scale: 1.1 }}
@@ -276,7 +276,7 @@ const ProjectCard = ({ project, index }) => {
           </motion.span>
         </div>
 
-        <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 line-clamp-2">{project.description}</p>
+        <p className="text-base text-slate-600 dark:text-slate-300 mb-4 line-clamp-3">{project.description}</p>
 
         <div className="flex flex-wrap gap-1.5 mb-4">
           {project.techStack?.slice(0, 3).map((tech, i) => (
@@ -800,7 +800,7 @@ function HomePage() {
             {loading ? (
               <LoadingSpinner message="Loading projects..." />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {filteredProjects.map((project, index) => (
                   <ProjectCard key={project._id} project={project} index={index} />
                 ))}
@@ -893,7 +893,21 @@ function HomePage() {
                       </motion.span>
                     </div>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">{item.issuer}</p>
-                    <p className="text-sm text-slate-600 dark:text-slate-300">{item.description}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">{item.description}</p>
+                    
+                    {/* Add certificate URL if available */}
+                    {item.certificateUrl && (
+                      <motion.a
+                        href={item.certificateUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 group"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        View Certificate
+                        <FiExternalLink className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                      </motion.a>
+                    )}
                   </motion.div>
                 ))}
               </div>
@@ -919,95 +933,123 @@ function HomePage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <form onSubmit={handleContactSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        Name
-                      </label>
-                      <motion.input
-                        type="text"
-                        id="name"
-                        name="name"
-                        placeholder="Your name"
-                        required
-                        value={contact.name}
-                        onChange={handleContactChange}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-                        whileFocus={{ scale: 1.02 }}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        Email
-                      </label>
-                      <motion.input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="Your email"
-                        required
-                        value={contact.email}
-                        onChange={handleContactChange}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-                        whileFocus={{ scale: 1.02 }}
-                      />
-                    </div>
-                  </div>
+  initial={{ opacity: 0, x: -20 }}
+  whileInView={{ opacity: 1, x: 0 }}
+  viewport={{ once: true }}
+  transition={{ duration: 0.5 }}
+  className="space-y-6"
+>
+  <motion.div
+    className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+    whileHover={{ y: -5 }}
+  >
+    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
+      Get In Touch
+    </h3>
 
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                      Message
-                    </label>
-                    <motion.textarea
-                      id="message"
-                      name="message"
-                      rows="4"
-                      placeholder="Your message"
-                      required
-                      value={contact.message}
-                      onChange={handleContactChange}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-                      whileFocus={{ scale: 1.02 }}
-                    />
-                  </div>
+    <form
+      onSubmit={handleContactSubmit}
+      className="space-y-6"
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+          >
+            Name
+          </label>
+          <motion.input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Your name"
+            required
+            value={contact.name}
+            onChange={handleContactChange}
+            className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            whileFocus={{ scale: 1.02 }}
+          />
+        </div>
 
-                  <motion.button
-                    type="submit"
-                    disabled={sending}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-medium shadow-lg shadow-sky-500/25 disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {sending ? (
-                      <>
-                        <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        <FiSend className="w-4 h-4" />
-                        Send message
-                      </>
-                    )}
-                  </motion.button>
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+          >
+            Email
+          </label>
+          <motion.input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Your email"
+            required
+            value={contact.email}
+            onChange={handleContactChange}
+            className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            whileFocus={{ scale: 1.02 }}
+          />
+        </div>
+      </div>
 
-                  {status && (
-                    <motion.p
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`text-sm ${status.includes("successfully") ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
-                    >
-                      {status}
-                    </motion.p>
-                  )}
-                </form>
-              </motion.div>
+      <div>
+        <label
+          htmlFor="message"
+          className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+        >
+          Message
+        </label>
+        <motion.textarea
+          id="message"
+          name="message"
+          rows="4"
+          placeholder="Your message"
+          required
+          value={contact.message}
+          onChange={handleContactChange}
+          className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+          whileFocus={{ scale: 1.02 }}
+        />
+      </div>
+
+      <motion.button
+        type="submit"
+        disabled={sending}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-medium shadow-lg shadow-sky-500/25 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        {sending ? (
+          <>
+            <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+            Sending...
+          </>
+        ) : (
+          <>
+            <FiSend className="w-4 h-4" />
+            Send message
+          </>
+        )}
+      </motion.button>
+
+      {status && (
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`text-sm ${
+            status.includes("successfully")
+              ? "text-green-600 dark:text-green-400"
+              : "text-red-600 dark:text-red-400"
+          }`}
+        >
+          {status}
+        </motion.p>
+      )}
+    </form>
+  </motion.div>
+</motion.div>
+
 
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
