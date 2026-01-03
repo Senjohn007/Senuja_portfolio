@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import Navbar from "../components/layouts/Navbar";
 import Footer from "../components/layouts/Footer";
 import { getProject } from "../lib/api";
+import ParticleBackground from "../components/animations/ParticleBackground";
+import GradientOrbs from "../components/animations/GradientOrbs";
+import FloatingShapes from "../components/animations/FloatingShapes";
+import NoiseTexture from "../components/animations/NoiseTexture";
 import { 
   FiArrowLeft, 
   FiExternalLink, 
@@ -13,7 +17,12 @@ import {
   FiStar,
   FiX,
   FiChevronLeft,
-  FiChevronRight
+  FiChevronRight,
+  FiCode,
+  FiDatabase,
+  FiTrendingUp,
+  FiLayers,
+  FiCpu
 } from "react-icons/fi";
 
 function ProjectDetailPage() {
@@ -23,6 +32,10 @@ function ProjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [imageIndex, setImageIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  
+  // Scroll progress indicator
+  const { scrollYProgress } = useScroll();
+  const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   useEffect(() => {
     async function load() {
@@ -126,15 +139,79 @@ function ProjectDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-50">
+      {/* Scroll Progress Indicator */}
+      <motion.div 
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-500 to-blue-600 z-50 origin-left"
+        style={{ scaleX }}
+      />
+
+      {/* Background animations */}
+      <ParticleBackground />
+      {/* <GradientOrbs />
+      <FloatingShapes />
+      <NoiseTexture /> */}
+      
       {/* Background decorative elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-gradient-to-br from-sky-400/10 to-blue-600/10 blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-gradient-to-tr from-purple-400/10 to-pink-600/10 blur-3xl"></div>
+        <motion.div 
+          className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-gradient-to-br from-sky-400/10 to-blue-600/10 blur-3xl"
+          animate={{ 
+            x: [0, 50, 0], 
+            y: [0, 30, 0], 
+            scale: [1, 1.1, 1] 
+          }}
+          transition={{ 
+            duration: 20, 
+            repeat: Infinity, 
+            repeatType: "reverse",
+            ease: "easeInOut" 
+          }}
+        />
+        <motion.div 
+          className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-gradient-to-tr from-purple-400/10 to-pink-600/10 blur-3xl"
+          animate={{ 
+            x: [0, -30, 0], 
+            y: [0, -50, 0], 
+            scale: [1, 1.2, 1] 
+          }}
+          transition={{ 
+            duration: 25, 
+            repeat: Infinity, 
+            repeatType: "reverse",
+            ease: "easeInOut" 
+          }}
+        />
+        
+        {/* Floating particles */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-slate-300/10 dark:bg-slate-700/10"
+            style={{
+              width: `${Math.random() * 10 + 5}px`,
+              height: `${Math.random() * 10 + 5}px`,
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, Math.random() * 100 - 50],
+              x: [0, Math.random() * 100 - 50],
+              opacity: [0, 0.5, 0],
+            }}
+            transition={{
+              duration: Math.random() * 20 + 10,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut",
+              delay: Math.random() * 5,
+            }}
+          />
+        ))}
       </div>
 
       <Navbar />
 
-      <main className="relative z-10 mx-auto max-w-4xl px-4 py-10 space-y-8">
+      <main className="relative z-10 mx-auto max-w-4xl px-4 pt-24 pb-10 space-y-8">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -142,7 +219,7 @@ function ProjectDetailPage() {
           className="space-y-8"
         >
           {/* Back button */}
-          <motion.div variants={itemVariants}>
+          <motion.div variants={itemVariants} className="mt-4">
             <motion.button
               whileHover={{ x: -3 }}
               whileTap={{ scale: 0.98 }}
@@ -159,8 +236,17 @@ function ProjectDetailPage() {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                  <FiTag className="w-3 h-3" />
-                  <span className="uppercase tracking-wide">{project.category}</span>
+                  <motion.div 
+                    className="inline-flex items-center px-3 py-1 rounded-full glass text-sm font-medium text-sky-600 dark:text-sky-400"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    {project.category === "Web" && <FiCode className="mr-2" />}
+                    {project.category === "Mobile" && <FiCpu className="mr-2" />}
+                    {project.category === "Data" && <FiDatabase className="mr-2" />}
+                    {project.category === "PowerBI" && <FiTrendingUp className="mr-2" />}
+                    {project.category === "Other" && <FiLayers className="mr-2" />}
+                    <span className="uppercase tracking-wide">{project.category}</span>
+                  </motion.div>
                   {created && (
                     <>
                       <span>·</span>
@@ -181,6 +267,7 @@ function ProjectDetailPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
                   className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-3 py-1 text-xs font-medium text-white shadow-lg"
+                  whileHover={{ scale: 1.05 }}
                 >
                   <FiStar className="w-3 h-3" />
                   Featured
@@ -196,21 +283,25 @@ function ProjectDetailPage() {
             {project.images && project.images.length > 0 && (
               <motion.div
                 variants={itemVariants}
-                className="relative overflow-hidden rounded-2xl border border-slate-200/50 glass shadow-lg"
+                className="relative overflow-hidden rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass shadow-lg"
+                whileHover={{ y: -5 }}
               >
                 <div className="relative h-64 md:h-80">
-                  <img
+                  <motion.img
                     src={project.images[imageIndex]}
                     alt={`${project.title} screenshot ${imageIndex + 1}`}
-                    className="h-full w-full object-cover cursor-pointer"
+                    className="h-full w-full object-cover cursor-pointer transition-transform duration-700 hover:scale-105"
                     onClick={() => openLightbox(imageIndex)}
                     loading="lazy"
+                    whileHover={{ scale: 1.02 }}
                   />
                   
                   {/* Image navigation */}
                   {project.images.length > 1 && (
                     <>
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={(e) => {
                           e.stopPropagation();
                           prevImage();
@@ -218,8 +309,10 @@ function ProjectDetailPage() {
                         className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 text-slate-800 shadow-md backdrop-blur-sm hover:bg-white dark:bg-slate-800/80 dark:text-white dark:hover:bg-slate-800"
                       >
                         <FiChevronLeft className="w-4 h-4" />
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={(e) => {
                           e.stopPropagation();
                           nextImage();
@@ -227,7 +320,7 @@ function ProjectDetailPage() {
                         className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 text-slate-800 shadow-md backdrop-blur-sm hover:bg-white dark:bg-slate-800/80 dark:text-white dark:hover:bg-slate-800"
                       >
                         <FiChevronRight className="w-4 h-4" />
-                      </button>
+                      </motion.button>
                     </>
                   )}
                   
@@ -235,8 +328,10 @@ function ProjectDetailPage() {
                   {project.images.length > 1 && (
                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
                       {project.images.map((_, index) => (
-                        <button
+                        <motion.button
                           key={index}
+                          whileHover={{ scale: 1.5 }}
+                          whileTap={{ scale: 0.8 }}
                           onClick={(e) => {
                             e.stopPropagation();
                             setImageIndex(index);
@@ -254,14 +349,16 @@ function ProjectDetailPage() {
                 
                 {/* Thumbnail strip */}
                 {project.images.length > 1 && (
-                  <div className="flex gap-2 p-2 overflow-x-auto">
+                  <div className="flex gap-2 p-2 overflow-x-auto bg-slate-50/30 dark:bg-slate-900/30">
                     {project.images.map((img, index) => (
-                      <button
+                      <motion.button
                         key={index}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={() => setImageIndex(index)}
                         className={`flex-shrink-0 h-12 w-12 rounded overflow-hidden border-2 ${
                           index === imageIndex
-                            ? "border-sky-500"
+                            ? "border-sky-500 shadow-lg shadow-sky-500/30"
                             : "border-transparent"
                         }`}
                       >
@@ -270,7 +367,7 @@ function ProjectDetailPage() {
                           alt={`Thumbnail ${index + 1}`}
                           className="h-full w-full object-cover"
                         />
-                      </button>
+                      </motion.button>
                     ))}
                   </div>
                 )}
@@ -280,34 +377,47 @@ function ProjectDetailPage() {
 
           {/* Problem */}
           <motion.section variants={itemVariants} className="space-y-3">
-            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400">
+            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                <FiTrendingUp className="w-4 h-4 text-sky-500" />
+              </div>
               Problem
             </h2>
-            <div className="rounded-xl border border-slate-200/50 glass p-4 shadow-sm">
+            <motion.div 
+              className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+              whileHover={{ y: -5 }}
+            >
               <p className="text-sm text-slate-600 dark:text-slate-300">
                 {project.problem ||
                   "Describe the real-world problem this project solves, such as inefficient workflows, poor visibility, or manual processes."}
               </p>
-            </div>
+            </motion.div>
           </motion.section>
 
           {/* Solution & features */}
           <motion.section variants={itemVariants} className="space-y-3">
-            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400">
+            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                <FiLayers className="w-4 h-4 text-sky-500" />
+              </div>
               Solution & Features
             </h2>
-            <div className="rounded-xl border border-slate-200/50 glass p-4 shadow-sm">
+            <motion.div 
+              className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+              whileHover={{ y: -5 }}
+            >
               {project.features && project.features.length > 0 ? (
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {project.features.map((f, index) => (
                     <motion.li
                       key={f}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.1 * index }}
-                      className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300"
+                      className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300"
+                      whileHover={{ x: 5 }}
                     >
-                      <span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-sky-500 flex-shrink-0"></span>
+                      <span className="mt-0.5 h-2 w-2 rounded-full bg-sky-500 flex-shrink-0"></span>
                       {f}
                     </motion.li>
                   ))}
@@ -318,15 +428,21 @@ function ProjectDetailPage() {
                   integrations, authentication, role-based access, etc.
                 </p>
               )}
-            </div>
+            </motion.div>
           </motion.section>
 
           {/* Tech stack */}
           <motion.section variants={itemVariants} className="space-y-3">
-            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400">
+            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                <FiCode className="w-4 h-4 text-sky-500" />
+              </div>
               Tech Stack
             </h2>
-            <div className="rounded-xl border border-slate-200/50 glass p-4 shadow-sm">
+            <motion.div 
+              className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+              whileHover={{ y: -5 }}
+            >
               {project.techStack && project.techStack.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {project.techStack.map((t, index) => (
@@ -335,7 +451,8 @@ function ProjectDetailPage() {
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.05 * index }}
-                      className="rounded-full bg-slate-100/70 px-3 py-1 text-xs text-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
+                      whileHover={{ scale: 1.1, y: -2 }}
+                      className="rounded-full bg-slate-100/70 px-3 py-1 text-xs text-slate-700 dark:bg-slate-800/70 dark:text-slate-200 shadow-sm"
                     >
                       {t}
                     </motion.span>
@@ -346,20 +463,26 @@ function ProjectDetailPage() {
                   List technologies used across frontend, backend, data, and tools.
                 </p>
               )}
-            </div>
+            </motion.div>
           </motion.section>
 
           {/* Challenges and learnings */}
           <motion.section variants={itemVariants} className="space-y-3">
-            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400">
+            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                <FiDatabase className="w-4 h-4 text-sky-500" />
+              </div>
               Challenges & Learnings
             </h2>
-            <div className="rounded-xl border border-slate-200/50 glass p-4 shadow-sm">
+            <motion.div 
+              className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+              whileHover={{ y: -5 }}
+            >
               <p className="text-sm text-slate-600 dark:text-slate-300">
                 {project.learnings ||
                   "Summarize key implementation challenges (performance, data modeling, auth, deployment) and what you learned from solving them."}
               </p>
-            </div>
+            </motion.div>
           </motion.section>
 
           {/* Links */}
@@ -394,20 +517,22 @@ function ProjectDetailPage() {
         </motion.div>
       </main>
 
-      {/* Lightbox */}
+      {/* Enhanced Lightbox */}
       <AnimatePresence>
         {lightboxOpen && project.images && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
             onClick={closeLightbox}
           >
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
               onClick={closeLightbox}
               className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm hover:bg-white/20"
             >
@@ -416,7 +541,9 @@ function ProjectDetailPage() {
             
             {project.images.length > 1 && (
               <>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={(e) => {
                     e.stopPropagation();
                     prevImage();
@@ -424,8 +551,10 @@ function ProjectDetailPage() {
                   className="absolute left-4 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm hover:bg-white/20"
                 >
                   <FiChevronLeft className="w-5 h-5" />
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={(e) => {
                     e.stopPropagation();
                     nextImage();
@@ -433,7 +562,7 @@ function ProjectDetailPage() {
                   className="absolute right-4 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm hover:bg-white/20"
                 >
                   <FiChevronRight className="w-5 h-5" />
-                </button>
+                </motion.button>
               </>
             )}
             
@@ -446,13 +575,16 @@ function ProjectDetailPage() {
               alt={`${project.title} screenshot ${imageIndex + 1}`}
               className="max-h-[80vh] max-w-full rounded-lg shadow-2xl"
               onClick={(e) => e.stopPropagation()}
+              whileHover={{ scale: 1.02 }}
             />
             
             {project.images.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
                 {project.images.map((_, index) => (
-                  <button
+                  <motion.button
                     key={index}
+                    whileHover={{ scale: 1.5 }}
+                    whileTap={{ scale: 0.8 }}
                     onClick={(e) => {
                       e.stopPropagation();
                       setImageIndex(index);

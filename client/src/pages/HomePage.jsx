@@ -42,7 +42,7 @@ const scrollToSection = (id) => {
 };
 
 // Skill Bar Component
-const SkillBar = ({ name, level, category }) => {
+const SkillBar = ({ name, proficiency, category }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   
@@ -50,13 +50,13 @@ const SkillBar = ({ name, level, category }) => {
     <div ref={ref} className="mb-6">
       <div className="flex justify-between mb-2">
         <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{name}</span>
-        <span className="text-xs text-slate-500 dark:text-slate-400">{level}%</span>
+        <span className="text-xs text-slate-500 dark:text-slate-400">{proficiency}%</span>
       </div>
       <div className="w-full bg-slate-200/30 dark:bg-slate-700/30 rounded-full h-2.5 overflow-hidden">
         <motion.div
           className="h-full rounded-full bg-gradient-to-r from-sky-500 to-blue-600 relative overflow-hidden"
           initial={{ width: 0 }}
-          animate={isInView ? { width: `${level}%` } : { width: 0 }}
+          animate={isInView ? { width: `${proficiency}%` } : { width: 0 }}
           transition={{ duration: 1.5, ease: "easeOut" }}
         >
           <motion.div
@@ -70,9 +70,10 @@ const SkillBar = ({ name, level, category }) => {
         <span className="inline-block text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
           {category}
         </span>
-        {category === "Programming" && <FiCode className="ml-2 w-3 h-3 text-slate-500" />}
-        {category === "Database" && <FiDatabase className="ml-2 w-3 h-3 text-slate-500" />}
-        {category === "Analytics" && <FiTrendingUp className="ml-2 w-3 h-3 text-slate-500" />}
+        {category === "Frontend" && <FiCode className="ml-2 w-3 h-3 text-slate-500" />}
+        {category === "Backend" && <FiTerminal className="ml-2 w-3 h-3 text-slate-500" />}
+        {category === "Tools" && <FiLayers className="ml-2 w-3 h-3 text-slate-500" />}
+        {category === "Data" && <FiDatabase className="ml-2 w-3 h-3 text-slate-500" />}
       </div>
     </div>
   );
@@ -246,8 +247,10 @@ function HomePage() {
   const [projects, setProjects] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeProjectFilter, setActiveProjectFilter] = useState("All");
+  const [activeSkillFilter, setActiveSkillFilter] = useState("All");
   const [filteredProjects, setFilteredProjects] = useState([]);
+  const [filteredSkills, setFilteredSkills] = useState([]);
   const [contact, setContact] = useState({
     name: "",
     email: "",
@@ -272,6 +275,7 @@ function HomePage() {
         setProjects(projectsData);
         setAchievements(achievementsData);
         setFilteredProjects(projectsData);
+        setFilteredSkills(skillsData);
       } finally {
         setLoading(false);
       }
@@ -281,11 +285,19 @@ function HomePage() {
 
   useEffect(() => {
     const filtered =
-      activeFilter === "All"
+      activeProjectFilter === "All"
         ? projects
-        : projects.filter((p) => p.category === activeFilter);
+        : projects.filter((p) => p.category === activeProjectFilter);
     setFilteredProjects(filtered);
-  }, [activeFilter, projects]);
+  }, [activeProjectFilter, projects]);
+
+  useEffect(() => {
+    const filtered =
+      activeSkillFilter === "All"
+        ? skills
+        : skills.filter((s) => s.category === activeSkillFilter);
+    setFilteredSkills(filtered);
+  }, [activeSkillFilter, skills]);
 
   const handleContactChange = (e) => {
     const { name, value } = e.target;
@@ -686,13 +698,13 @@ function HomePage() {
 
             <div className="flex justify-center mb-8">
               <div className="inline-flex rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass p-1">
-                {["All", "Data", "Web"].map((filter) => (
+                {["All", "Web", "Mobile", "Data", "PowerBI", "Other"].map((filter) => (
                   <motion.button
                     key={filter}
                     type="button"
-                    onClick={() => setActiveFilter(filter)}
+                    onClick={() => setActiveProjectFilter(filter)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      activeFilter === filter
+                      activeProjectFilter === filter
                         ? "bg-sky-500 text-white shadow-md shadow-sky-500/25"
                         : "text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
                     }`}
@@ -733,11 +745,32 @@ function HomePage() {
               </p>
             </motion.div>
 
+            <div className="flex justify-center mb-8">
+              <div className="inline-flex rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass p-1">
+                {["All", "Frontend", "Backend", "Tools", "Data"].map((filter) => (
+                  <motion.button
+                    key={filter}
+                    type="button"
+                    onClick={() => setActiveSkillFilter(filter)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      activeSkillFilter === filter
+                        ? "bg-sky-500 text-white shadow-md shadow-sky-500/25"
+                        : "text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {filter}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
             {loading ? (
               <LoadingSpinner message="Loading skills..." />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {skills.map((skill, index) => (
+                {filteredSkills.map((skill, index) => (
                   <motion.div
                     key={skill._id || skill.name}
                     initial={{ opacity: 0, y: 20 }}
@@ -747,7 +780,7 @@ function HomePage() {
                     whileHover={{ y: -5 }}
                     className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
                   >
-                    <SkillBar name={skill.name} level={skill.level || 75} category={skill.category} />
+                    <SkillBar name={skill.name} proficiency={skill.proficiency} category={skill.category} />
                   </motion.div>
                 ))}
               </div>
