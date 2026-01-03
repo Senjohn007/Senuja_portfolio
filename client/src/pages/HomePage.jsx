@@ -1,141 +1,170 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../components/layouts/Navbar";
-import Footer from "../components/layouts/Footer";
-import SectionWrapper from "../components/layouts/SectionWrapper";
-import LoadingSpinner from "../components/ui/LoadingSpinner";
-import ParticleBackground from "../components/animations/ParticleBackground";
+import { motion, useInView } from "framer-motion";
 import {
   getSkills,
   getProjects,
   getAchievements,
   postMessage,
 } from "../lib/api";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import Navbar from "../components/layouts/Navbar";
+import Footer from "../components/layouts/Footer";
+import SectionWrapper from "../components/layouts/SectionWrapper";
 import { 
-  Code, 
-  Database, 
-  BarChart3, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  ExternalLink, 
-  Calendar,
-  Github,
-  Linkedin,
-  Award,
-  BookOpen,
-  Briefcase,
-  ChevronRight,
-  Sparkles,
-  Zap,
-  TrendingUp,
-  Instagram,
-  Facebook
-} from "lucide-react";
+  FiDownload, 
+  FiArrowRight, 
+  FiMail, 
+  FiPhone,
+  FiMapPin,
+  FiExternalLink,
+  FiGithub,
+  FiLinkedin,
+  FiSend
+} from "react-icons/fi";
 
-// Import your picture
-import profileImage from "../assets/profile.jpg";
-
-const PROJECT_CATEGORIES = ["All", "Data"];
+// Import your profile image at the top of the file
+import profileImage from "../assets/senuja_portrait.jpg";
 
 const scrollToSection = (id) => {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: "smooth" });
 };
 
-const sectionVariant = {
-  hidden: { opacity: 0, y: 32 },
-  visible: { opacity: 1, y: 0 },
-};
-
-const textVariant = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1 } }
-};
-
-const letterVariant = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
-};
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
-};
-
 // Skill Bar Component
 const SkillBar = ({ name, level, category }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, amount: 0.5 });
-  
-  useEffect(() => {
-    if (inView) {
-      setIsVisible(true);
-    }
-  }, [inView]);
-  
   return (
-    <div ref={ref} className="mb-4">
-      <div className="flex justify-between mb-1">
-        <span className="text-sm font-medium">{name}</span>
-        <span className="text-xs text-slate-500">{level}%</span>
+    <div className="mb-6">
+      <div className="flex justify-between mb-2">
+        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{name}</span>
+        <span className="text-xs text-slate-500 dark:text-slate-400">{level}%</span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+      <div className="w-full bg-slate-200/30 dark:bg-slate-700/30 rounded-full h-2">
         <motion.div
-          className="bg-gradient-to-r from-sky-500 to-blue-600 h-2.5 rounded-full"
+          className="h-2 rounded-full bg-gradient-to-r from-sky-500 to-blue-600"
+          style={{ width: `${level}%` }}
           initial={{ width: 0 }}
-          animate={{ width: isVisible ? `${level}%` : 0 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
+          whileInView={{ width: `${level}%` }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease: "easeOut" }}
         />
       </div>
+      <span className="inline-block mt-2 text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+        {category}
+      </span>
     </div>
   );
 };
 
 // Timeline Item Component
-const TimelineItem = ({ date, title, description, icon, color, index }) => {
-  const [isHovered, setIsHovered] = useState(false);
+const TimelineItem = ({ date, title, description, isLast = false }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  
+  return (
+    <motion.div 
+      ref={ref}
+      className="relative pl-8 pb-8"
+      initial={{ opacity: 0, x: -20 }}
+      animate={isInView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50" />
+      {!isLast && <div className="absolute left-1.5 top-4 h-full w-0.5 bg-slate-300 dark:bg-slate-700"></div>}
+      <div className="ml-4">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1">
+          {date}
+        </p>
+        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100 mb-1">{title}</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-300">{description}</p>
+      </div>
+    </motion.div>
+  );
+};
+
+// Project Card Component
+const ProjectCard = ({ project, index }) => {
+  const thumb = project.images?.[0];
+  const hasRepo = !!project.links?.repo;
+  const hasDemo = !!project.links?.demo;
   
   return (
     <motion.div
-      className="relative pl-8 mb-8"
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
-      whileHover={{ x: 5 }}
+      whileHover={{ y: -5 }}
+      className="group relative overflow-hidden rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass shadow-md hover:shadow-xl transition-all duration-300"
     >
-      {/* Timeline dot */}
-      <motion.div
-        className={`absolute left-0 top-1.5 h-3 w-3 rounded-full bg-${color}-500 shadow-lg`}
-        animate={{ scale: isHovered ? 1.3 : 1 }}
-        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-      />
-      
-      {/* Timeline line */}
-      <div className="absolute left-1.5 top-4 h-full w-0.5 bg-slate-200 dark:bg-slate-700"></div>
-      
-      {/* Content */}
-      <div className="ml-4">
-        <p className="text-xs font-medium uppercase tracking-wide text-slate-500 mb-1">
-          {date}
-        </p>
-        <h3 className="text-sm font-semibold mb-1">{title}</h3>
-        <p className="text-xs text-slate-600 dark:text-slate-300">{description}</p>
+      {thumb && (
+        <div className="relative h-48 w-full overflow-hidden">
+          <img
+            src={thumb}
+            alt={project.title}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </div>
+      )}
+
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{project.title}</h3>
+          <span className="text-xs px-2 py-1 rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400">
+            {project.category}
+          </span>
+        </div>
+
+        <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 line-clamp-2">{project.description}</p>
+
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          {project.techStack?.slice(0, 3).map((tech) => (
+            <span key={tech} className="text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+              {tech}
+            </span>
+          ))}
+          {project.techStack?.length > 3 && (
+            <span className="text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+              +{project.techStack.length - 3} more
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between">
+          <Link 
+            to={`/projects/${project._id}`} 
+            className="inline-flex items-center gap-1 text-sm font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300"
+          >
+            View details
+            <FiArrowRight className="w-3 h-3" />
+          </Link>
+
+          <div className="flex gap-2">
+            {hasDemo && (
+              <a
+                href={project.links.demo}
+                target="_blank"
+                rel="noreferrer"
+                className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-900/30 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+                aria-label="View live demo"
+              >
+                <FiExternalLink className="w-4 h-4" />
+              </a>
+            )}
+            {hasRepo && (
+              <a
+                href={project.links.repo}
+                target="_blank"
+                rel="noreferrer"
+                className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-900/30 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+                aria-label="View source code"
+              >
+                <FiGithub className="w-4 h-4" />
+              </a>
+            )}
+          </div>
+        </div>
       </div>
     </motion.div>
   );
@@ -148,7 +177,6 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
   const [filteredProjects, setFilteredProjects] = useState([]);
-  const [isFiltering, setIsFiltering] = useState(false);
   const [contact, setContact] = useState({
     name: "",
     email: "",
@@ -156,37 +184,32 @@ function HomePage() {
   });
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState("");
-  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     async function load() {
       try {
-        const [skillsData, projectsData, achievementsData] = await Promise.all(
-          [getSkills(), getProjects(), getAchievements()]
-        );
+        const [skillsData, projectsData, achievementsData] = await Promise.all([
+          getSkills(),
+          getProjects(),
+          getAchievements(),
+        ]);
         setSkills(skillsData);
         setProjects(projectsData);
         setAchievements(achievementsData);
         setFilteredProjects(projectsData);
       } finally {
         setLoading(false);
-        setIsLoaded(true);
       }
     }
     load();
   }, []);
 
   useEffect(() => {
-    setIsFiltering(true);
-    
-    // Simulate filtering animation
-    setTimeout(() => {
-      const filtered = activeFilter === "All"
+    const filtered =
+      activeFilter === "All"
         ? projects
         : projects.filter((p) => p.category === activeFilter);
-      setFilteredProjects(filtered);
-      setIsFiltering(false);
-    }, 300);
+    setFilteredProjects(filtered);
   }, [activeFilter, projects]);
 
   const handleContactChange = (e) => {
@@ -215,805 +238,590 @@ function HomePage() {
     }
   };
 
-  const titleText = "Turning data into meaningful insights.";
-  const titleLetters = titleText.split("");
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-50 relative overflow-hidden">
-      {/* New: Animated Floating Background Elements (Blobs) */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-50">
+      {/* Background decorative elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {/* Blue/Sky Blob */}
-        <motion.div
-          className="absolute h-16 w-16 bg-sky-500/20 rounded-xl"
-          animate={{ 
-            x: ["-50%", "150%", "-50%"],
-            y: ["-50%", "100%", "-50%"],
-            rotate: [0, 360, 0],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          style={{ top: '10%', left: '5%' }}
-        />
-
-        {/* Violet/Purple Blob */}
-        <motion.div
-          className="absolute h-24 w-24 bg-violet-500/20 rounded-full"
-          animate={{ 
-            x: ["0%", "50%", "0%"],
-            y: ["150%", "-100%", "150%"],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
-          style={{ bottom: '10%', right: '15%' }}
-        />
-
-        {/* Emerald/Green Blob */}
-        <motion.div
-          className="absolute h-12 w-12 bg-emerald-500/20 rounded-lg"
-          animate={{ 
-            x: ["100%", "-100%", "100%"],
-            y: ["-100%", "100%", "-100%"],
-            rotate: [0, -360, 0],
-          }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-          style={{ top: '30%', right: '10%' }}
-        />
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-gradient-to-br from-sky-400/10 to-blue-600/10 blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-gradient-to-tr from-purple-400/10 to-pink-600/10 blur-3xl"></div>
       </div>
-      
-      {/* Particle Background */}
-      <ParticleBackground />
 
       <Navbar />
 
       <main className="relative z-10">
-        {/* ============== Hero ============== */}
-        <SectionWrapper
-          id="hero"
-          className="flex flex-col gap-10 md:flex-row md:items-center overflow-hidden"
-        >
-          <motion.div
-            variants={sectionVariant}
-            initial="hidden"
-            animate={isLoaded ? "visible" : "hidden"}
-            transition={{ duration: 0.6 }}
-            className="flex-1 space-y-6"
-          >
-            <motion.div
-              variants={textVariant}
-              initial="hidden"
-              animate={isLoaded ? "visible" : "hidden"}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              <p className="text-sm font-medium text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500 flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
-                Senuja Masinghe · Data Science Undergraduate
-              </p>
-            </motion.div>
-
-            <motion.h1 
-              className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
-              variants={textVariant}
-              initial="hidden"
-              animate={isLoaded ? "visible" : "hidden"}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              {titleLetters.map((letter, index) => (
-                <motion.span
-                  key={index}
-                  variants={letterVariant}
-                  transition={{ duration: 0.5, delay: 0.3 + index * 0.03 }}
-                  className={letter === " " ? "inline-block w-2" : "inline-block"}
-                >
-                  {letter}
-                </motion.span>
-              ))}
-            </motion.h1>
-
-            <motion.p 
-              className="max-w-xl text-sm text-slate-600 dark:text-slate-300 sm:text-base"
-              variants={textVariant}
-              initial="hidden"
-              animate={isLoaded ? "visible" : "hidden"}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              3rd-year Data Science undergraduate at SLIIT with a strong
-              interest in analysis, visualization, and building impactful
-              data‑driven solutions using Python, SQL, and Power BI.
-            </motion.p>
-
+        {/* Hero Section */}
+        <SectionWrapper id="hero" className="min-h-screen flex items-center justify-center px-4 py-20">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div 
-              className="flex flex-wrap gap-3"
-              variants={textVariant}
-              initial="hidden"
-              animate={isLoaded ? "visible" : "hidden"}
-              transition={{ duration: 0.5, delay: 0.5 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="space-y-6"
             >
-              <motion.a
-                whileHover={{ scale: 1.05, y: -3 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                href="http://localhost:5000/cv.pdf"
-                className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+              <motion.div 
+                className="inline-flex items-center px-3 py-1 rounded-full glass text-sm font-medium text-sky-600 dark:text-sky-400"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <span className="relative z-10 flex items-center gap-2">
-                  <Zap className="w-4 h-4" />
+                Data Science Undergraduate
+              </motion.div>
+
+              <motion.h1 
+                className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <span className="block">Turning data into</span>
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600">
+                  meaningful insights
+                </span>
+              </motion.h1>
+
+              <motion.p 
+                className="text-lg text-slate-600 dark:text-slate-300 max-w-xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                3rd-year Data Science undergraduate at SLIIT with a strong interest in analysis, visualization, and building impactful data-driven solutions using Python, SQL, and Power BI.
+              </motion.p>
+
+              <motion.div 
+                className="flex flex-wrap gap-4 pt-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <motion.a
+                  href="http://localhost:5000/cv.pdf"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-medium shadow-lg shadow-sky-500/25"
+                >
+                  <FiDownload className="w-4 h-4" />
                   Download CV
-                </span>
-                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-600 to-sky-500 opacity-0 transition-opacity group-hover:opacity-100"></div>
-              </motion.a>
+                </motion.a>
 
-              <motion.button
-                type="button"
-                whileHover={{ scale: 1.05, y: -3 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                onClick={() => scrollToSection("projects")}
-                className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg border border-sky-500/30 bg-sky-50/50 px-5 py-2.5 text-sm font-medium text-sky-700 backdrop-blur-sm transition-all hover:bg-sky-100/70 dark:bg-sky-950/30 dark:text-sky-300 dark:hover:bg-sky-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <Code className="w-4 h-4" />
+                <motion.button
+                  type="button"
+                  onClick={() => scrollToSection("projects")}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-700 glass text-slate-700 dark:text-slate-200 font-medium"
+                >
                   View projects
-                </span>
-                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-sky-500/10 to-blue-500/10 opacity-0 transition-opacity group-hover:opacity-100"></div>
-              </motion.button>
+                  <FiArrowRight className="w-4 h-4" />
+                </motion.button>
 
-              <motion.button
-                type="button"
-                whileHover={{ scale: 1.05, y: -3 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                onClick={() => scrollToSection("contact")}
-                className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg border border-slate-300 bg-white/50 px-5 py-2.5 text-sm font-medium backdrop-blur-sm transition-all hover:bg-slate-100/70 dark:border-slate-700 dark:bg-slate-900/50 dark:hover:bg-slate-800/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
+                <motion.button
+                  type="button"
+                  onClick={() => scrollToSection("contact")}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-700 glass text-slate-700 dark:text-slate-200 font-medium"
+                >
                   Contact me
-                </span>
-                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-500/10 to-slate-600/10 opacity-0 transition-opacity group-hover:opacity-100"></div>
-              </motion.button>
+                  <FiArrowRight className="w-4 h-4" />
+                </motion.button>
+              </motion.div>
             </motion.div>
-          </motion.div>
 
-          {/* Right side: enhanced profile photo with more animations */}
-          <motion.div
-            className="flex-1"
-            variants={sectionVariant}
-            initial="hidden"
-            animate={isLoaded ? "visible" : "hidden"}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <div className="relative mx-auto flex max-w-xs flex-col items-center sm:max-w-md">
-              {/* Enhanced animated gradient glow behind avatar */}
-              <motion.div
-                className="pointer-events-none absolute -inset-10 rounded-full bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30"
-                animate={{ 
-                  scale: [1, 1.07, 1], 
-                  opacity: [0.7, 1, 0.7],
-                  rotate: [0, 5, 0, -5, 0]
-                }}
-                transition={{ 
-                  duration: 7, 
-                  repeat: Infinity, 
-                  ease: "easeInOut" 
-                }}
-              />
-
-              {/* Bigger circular avatar frame with enhanced hover effect */}
-              <motion.div
-                whileHover={{ 
-                  scale: 1.04, 
-                  rotate: 2,
-                  boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.3)"
-                }}
-                transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                className="relative h-56 w-56 overflow-hidden rounded-full border-4 border-white/50 bg-slate-900 shadow-2xl ring-4 ring-sky-500/40 backdrop-blur-sm dark:border-slate-800/50 sm:h-64 sm:w-64"
-              >
-                <img
-                  src={profileImage}
-                  alt="Senuja Masinghe"
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-              </motion.div>
-
-              {/* Floating elements around the avatar */}
-              <motion.div
-                className="absolute top-10 right-10 h-6 w-6 rounded-full bg-sky-500/30"
-                animate={{
-                  y: [0, -10, 0],
-                  x: [0, 5, 0],
-                  opacity: [0.3, 0.7, 0.3]
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  ease: "easeInOut"
-                }}
-              />
-              <motion.div
-                className="absolute bottom-10 left-10 h-8 w-8 rounded-full bg-violet-500/30"
-                animate={{
-                  y: [0, 10, 0],
-                  x: [0, -5, 0],
-                  opacity: [0.3, 0.7, 0.3]
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  ease: "easeInOut"
-                }}
-              />
-            </div>
-          </motion.div>
+           <motion.div 
+  className="flex items-center justify-center"
+  initial={{ opacity: 0, scale: 0.9 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.5, delay: 0.2 }}
+>
+  <div className="relative">
+    {/* Animated gradient glow behind avatar */}
+    <motion.div
+      className="absolute -inset-4 rounded-full bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30 blur-xl"
+      animate={{ 
+        scale: [1, 1.1, 1], 
+        opacity: [0.7, 1, 0.7],
+        rotate: [0, 5, 0, -5, 0]
+      }}
+      transition={{ 
+        duration: 7, 
+        repeat: Infinity, 
+        ease: "easeInOut" 
+      }}
+    />
+    
+    {/* Avatar with enhanced styling - Increased size */}
+    <motion.div
+      whileHover={{ 
+        scale: 1.05, 
+        rotate: 2,
+        boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.3)"
+      }}
+      transition={{ type: "spring", stiffness: 200, damping: 18 }}
+      className="relative h-96 w-96 overflow-hidden rounded-2xl border-4 border-white/50 bg-slate-900 shadow-2xl ring-4 ring-sky-500/40 backdrop-blur-sm dark:border-slate-800/50"
+    >
+      <img
+        src={profileImage} // Using the imported image
+        alt="Senuja Masinghe"
+        className="h-full w-full object-contain"
+        loading="lazy"
+      />
+      {/* Overlay gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+    </motion.div>
+    
+    {/* Floating elements around the avatar - Adjusted positions */}
+    <motion.div
+      className="absolute top-12 right-12 h-8 w-8 rounded-full bg-sky-500/30"
+      animate={{
+        y: [0, -15, 0],
+        x: [0, 8, 0],
+        opacity: [0.3, 0.7, 0.3]
+      }}
+      transition={{
+        duration: 4,
+        repeat: Infinity,
+        repeatType: "reverse",
+        ease: "easeInOut"
+      }}
+    />
+    <motion.div
+      className="absolute bottom-12 left-12 h-10 w-10 rounded-full bg-violet-500/30"
+      animate={{
+        y: [0, 15, 0],
+        x: [0, -8, 0],
+        opacity: [0.3, 0.7, 0.3]
+      }}
+      transition={{
+        duration: 5,
+        repeat: Infinity,
+        repeatType: "reverse",
+        ease: "easeInOut"
+      }}
+    />
+    
+    {/* Additional floating element for balance */}
+    <motion.div
+      className="absolute top-1/3 -left-8 h-6 w-6 rounded-full bg-emerald-500/30"
+      animate={{
+        y: [0, -10, 0],
+        x: [0, 5, 0],
+        opacity: [0.3, 0.7, 0.3]
+      }}
+      transition={{
+        duration: 6,
+        repeat: Infinity,
+        repeatType: "reverse",
+        ease: "easeInOut"
+      }}
+    />
+  </div>
+</motion.div>
+          </div>
         </SectionWrapper>
 
-        {/* Current focus card with enhanced design */}
-        <SectionWrapper className="pt-0">
-          <motion.div
-            variants={sectionVariant}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-xl"
-          >
-            <div className="relative">
-              <div className="pointer-events-none absolute -inset-4 rounded-3xl bg-gradient-to-tr from-sky-500/40 via-violet-500/30 to-emerald-400/30" />
-              <motion.div 
-                className="relative rounded-3xl border border-slate-200/50 glass-border-highlight p-6 shadow-xl"
-                whileHover={{ y: -3, boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.15)" }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                <p className="mb-3 text-xs font-medium uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500 flex items-center gap-2">
-                  <Zap className="w-4 h-4" />
-                  Current focus
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-3">
-                    <span className="mt-0.5 h-2 w-2 rounded-full bg-sky-500 flex-shrink-0"></span>
-                    <span className="text-sm">Data analysis with Python &amp; Pandas</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-0.5 h-2 w-2 rounded-full bg-violet-500 flex-shrink-0"></span>
-                    <span className="text-sm">Interactive dashboards using Power BI</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-0.5 h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0"></span>
-                    <span className="text-sm">SQL for querying and transforming data</span>
-                  </li>
-                </ul>
-              </motion.div>
-            </div>
-          </motion.div>
-        </SectionWrapper>
-
-        {/* ============== About ============== */}
-        <SectionWrapper id="about">
-          <motion.div
-            variants={sectionVariant}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5 }}
-            className="grid items-start gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)]"
-          >
-            <div>
-              <h2 className="mb-4 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
-                <BookOpen className="w-6 h-6" />
-                About
-              </h2>
-              <p className="mb-4 text-sm text-slate-600 dark:text-slate-300">
-                Data‑driven problem solver who enjoys turning messy, real‑world
-                datasets into clear stories and actionable insights, with
-                interest in end‑to‑end solutions from pipelines to dashboards.
-              </p>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
-                Currently studying at SLIIT and exploring statistics, machine
-                learning, and data engineering while applying them in projects
-                around education, healthcare, and productivity.
-              </p>
-            </div>
-
-            <div className="relative space-y-6">
-              {/* Timeline items with enhanced design */}
-              <TimelineItem
-                date="2022 – Present"
-                title="BSc (Hons) in Information Technology – Data Science"
-                description="Sri Lanka Institute of Information Technology (SLIIT)"
-                icon={<BookOpen className="w-4 h-4" />}
-                color="sky"
-                index={0}
-              />
-              
-              <TimelineItem
-                date="2023 – Present"
-                title="Hands‑on projects"
-                description="Building dashboards, data pipelines, and full‑stack tools to practice cloud, APIs, and analytics"
-                icon={<Code className="w-4 h-4" />}
-                color="violet"
-                index={1}
-              />
-              
-              <TimelineItem
-                date="Next"
-                title="Internship &amp; research"
-                description="Looking for opportunities in data engineering, analytics, or ML‑driven products"
-                icon={<Briefcase className="w-4 h-4" />}
-                color="emerald"
-                index={2}
-              />
-            </div>
-          </motion.div>
-        </SectionWrapper>
-
-        {/* ============== Projects ============== */}
-        <SectionWrapper id="projects">
-          <motion.div
-            variants={sectionVariant}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-baseline">
-              <div>
-                <h2 className="mb-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
-                  <Code className="w-6 h-6" />
-                  Projects
-                </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
-                  Academic and self-learning projects focused on data analysis,
-                  visualization, and full‑stack solutions.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {PROJECT_CATEGORIES.map((cat) => (
-                  <motion.button
-                    key={cat}
-                    type="button"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setActiveFilter(cat)}
-                    className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${
-                      activeFilter === cat
-                        ? "border-sky-600 bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
-                        : "border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
-                    }`}
-                  >
-                    {cat}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-
-            {loading ? (
-              <div className="flex justify-center py-10">
-                <LoadingSpinner size="lg" />
-              </div>
-            ) : (
-              <motion.div 
-                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-                layout
-              >
-                <AnimatePresence>
-                  {filteredProjects.map((project, index) => {
-                    const thumb = project.images?.[0];
-                    const hasRepo = !!project.links?.repo;
-                    const hasDemo = !!project.links?.demo;
-
-                    return (
-                      <motion.article
-                        key={project._id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        transition={{ duration: 0.5 }}
-                        whileHover={{ y: -5, scale: 1.02 }}
-                        className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/50 glass-border-highlight shadow-sm transition-all hover:border-sky-500/50 hover:shadow-xl"
-                      >
-                        {thumb && (
-                          <div className="relative h-40 w-full overflow-hidden">
-                            <img
-                              src={thumb}
-                              alt={project.title}
-                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              loading="lazy"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          </div>
-                        )}
-
-                        <div className="flex flex-1 flex-col p-4">
-                          <h3 className="mb-2 text-base font-semibold">
-                            {project.title}
-                          </h3>
-                          <p className="mb-3 text-xs uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500">
-                            {project.category}
-                          </p>
-
-                          <p className="mb-4 line-clamp-3 text-xs text-slate-600 dark:text-slate-300">
-                            {project.description}
-                          </p>
-
-                          <div className="mb-4 flex flex-wrap gap-1.5">
-                            {project.techStack?.map((tech) => (
-                              <span
-                                key={tech}
-                                className="rounded-full bg-slate-100/70 px-2 py-0.5 text-xs text-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-
-                          <div className="mt-auto flex items-center justify-between gap-2 pt-2">
-                            <Link
-                              to={`/projects/${project._id}`}
-                              className="text-xs font-medium text-sky-600 transition-colors hover:text-sky-500 hover:underline dark:text-sky-400 flex items-center gap-1"
-                            >
-                              View details <ChevronRight className="w-3 h-3" />
-                            </Link>
-
-                            <div className="flex gap-2">
-                              {hasDemo && (
-                                <motion.a
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  href={project.links.demo}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="rounded-full border border-slate-300/50 bg-white/50 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70 flex items-center gap-1"
-                                >
-                                  <ExternalLink className="w-3 h-3" />
-                                  Live
-                                </motion.a>
-                              )}
-                              {hasRepo && (
-                                <motion.a
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  href={project.links.repo}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="rounded-full bg-gradient-to-r from-slate-900 to-slate-700 px-2 py-1 text-xs font-medium text-white hover:from-slate-800 hover:to-slate-600 dark:from-slate-100 dark:to-slate-300 dark:text-slate-900 dark:hover:from-slate-200 dark:hover:to-slate-400 flex items-center gap-1"
-                                >
-                                  <Github className="w-3 h-3" />
-                                  Code
-                                </motion.a>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </motion.article>
-                    );
-                  })}
-                </AnimatePresence>
-              </motion.div>
-            )}
-          </motion.div>
-        </SectionWrapper>
-
-        {/* ============== Skills ============== */}
-        <SectionWrapper id="skills">
-          <motion.div
-            variants={sectionVariant}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="mb-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
-              <Database className="w-6 h-6" />
-              Skills
-            </h2>
-            <p className="mb-6 text-sm text-slate-600 dark:text-slate-300">
-              Core tools and concepts used in data science workflows.
-            </p>
-
-            {loading ? (
-              <div className="flex justify-center py-10">
-                <LoadingSpinner size="lg" />
-              </div>
-            ) : (
-              <motion.div 
-                className="grid gap-4 sm:grid-cols-2 md:grid-cols-3"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.1 }}
-              >
-                {skills.map((skill, index) => (
+        {/* Current Focus Section */}
+        <SectionWrapper id="focus" className="py-20 px-4">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-8 shadow-lg"
+            >
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Current Focus</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  "Data analysis with Python & Pandas",
+                  "Interactive dashboards using Power BI",
+                  "SQL for querying and transforming data"
+                ].map((item, index) => (
                   <motion.div
-                    key={skill._id || skill.name}
-                    variants={itemVariants}
-                    whileHover={{ y: -3, scale: 1.02 }}
-                    className="group rounded-xl border border-slate-200/50 glass-border-highlight p-4 shadow-sm transition-all hover:border-sky-500/50 hover:shadow-md"
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="flex items-start gap-3"
                   >
-                    <h3 className="text-sm font-medium mb-2">{skill.name}</h3>
-                    <SkillBar name={skill.name} level={skill.level || 75} category={skill.category} />
-                    <span className="rounded-full bg-slate-100/70 px-2 py-0.5 text-xs text-slate-500 dark:bg-slate-800/70 dark:text-slate-400">
-                      {skill.category}
-                    </span>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-          </motion.div>
-        </SectionWrapper>
-
-        {/* ============== Achievements ============== */}
-        <SectionWrapper id="achievements">
-          <motion.div
-            variants={sectionVariant}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="mb-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
-              <Award className="w-6 h-6" />
-              Achievements
-            </h2>
-            <p className="mb-6 text-sm text-slate-600 dark:text-slate-300">
-              Academic background and certifications.
-            </p>
-
-            {loading ? (
-              <div className="flex justify-center py-10">
-                <LoadingSpinner size="lg" />
-              </div>
-            ) : (
-              <motion.div 
-                className="space-y-4"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.1 }}
-              >
-                {achievements.map((item, index) => (
-                  <motion.div
-                    key={item._id || item.title}
-                    variants={itemVariants}
-                    whileHover={{ y: -3, x: 3 }}
-                    className="group rounded-xl border border-slate-200/50 glass-border-highlight p-4 shadow-sm transition-all hover:border-sky-500/50 hover:shadow-md"
-                  >
-                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                      <h3 className="text-sm font-semibold flex items-center gap-2">
-                        <Award className="w-4 h-4 text-sky-500" />
-                        {item.title}
-                      </h3>
-                      <span className="rounded-full bg-slate-100/70 px-2 py-0.5 text-xs text-slate-500 dark:bg-slate-800/70 dark:text-slate-400 flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {item.date
-                          ? new Date(item.date).toLocaleDateString()
-                          : ""}
-                      </span>
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center mt-0.5">
+                      <div className="w-2 h-2 rounded-full bg-sky-500"></div>
                     </div>
-                    <p className="mb-2 text-xs text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600 dark:from-sky-400 dark:to-blue-500">
-                      {item.issuer}
-                    </p>
-                    <p className="text-xs text-slate-600 dark:text-slate-300">
-                      {item.description}
-                    </p>
+                    <p className="text-slate-700 dark:text-slate-300">{item}</p>
                   </motion.div>
                 ))}
-              </motion.div>
-            )}
-          </motion.div>
+              </div>
+            </motion.div>
+          </div>
         </SectionWrapper>
 
-        {/* ============== Contact ============== */}
-        <SectionWrapper id="contact">
-          <motion.div
-            variants={sectionVariant}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="mb-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
-              <Mail className="w-6 h-6" />
-              Contact
-            </h2>
-            <p className="mb-6 text-sm text-slate-600 dark:text-slate-300">
-              Open to internships, data-related projects, and learning
-              opportunities.
-            </p>
+        {/* About Section */}
+        <SectionWrapper id="about" className="py-20 px-4">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">About Me</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                Data-driven problem solver who enjoys turning messy, real-world datasets into clear stories and actionable insights.
+              </p>
+            </motion.div>
 
-            <div className="grid gap-8 md:grid-cols-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="space-y-4"
+              >
+                <p className="text-slate-700 dark:text-slate-300">
+                  Data-driven problem solver who enjoys turning messy, real-world datasets into clear stories and actionable insights, with interest in end-to-end solutions from pipelines to dashboards.
+                </p>
+                <p className="text-slate-700 dark:text-slate-300">
+                  Currently studying at SLIIT and exploring statistics, machine learning, and data engineering while applying them in projects around education, healthcare, and productivity.
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="space-y-0"
+              >
+                <TimelineItem
+                  date="2022 – Present"
+                  title="BSc (Hons) in Information Technology – Data Science"
+                  description="Sri Lanka Institute of Information Technology (SLIIT)"
+                />
+                <TimelineItem
+                  date="2023 – Present"
+                  title="Hands-on projects"
+                  description="Building dashboards, data pipelines, and full-stack tools to practice cloud, APIs, and analytics"
+                />
+                <TimelineItem
+                  date="Next"
+                  title="Internship & research"
+                  description="Looking for opportunities in data engineering, analytics, or ML-driven products"
+                  isLast={true}
+                />
+              </motion.div>
+            </div>
+          </div>
+        </SectionWrapper>
+
+        {/* Projects Section */}
+        <SectionWrapper id="projects" className="py-20 px-4">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Projects</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                Academic and self-learning projects focused on data analysis, visualization, and full-stack solutions.
+              </p>
+            </motion.div>
+
+            <div className="flex justify-center mb-8">
+              <div className="inline-flex rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass p-1">
+                {["All", "Data", "Web"].map((filter) => (
+                  <button
+                    key={filter}
+                    type="button"
+                    onClick={() => setActiveFilter(filter)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      activeFilter === filter
+                        ? "bg-sky-500 text-white shadow-md shadow-sky-500/25"
+                        : "text-slate-600 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-20">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border-4 border-slate-200 dark:border-slate-700 border-t-sky-500 animate-spin"></div>
+                <p className="mt-4 text-slate-600 dark:text-slate-300">Loading projects...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredProjects.map((project, index) => (
+                  <ProjectCard key={project._id} project={project} index={index} />
+                ))}
+              </div>
+            )}
+          </div>
+        </SectionWrapper>
+
+        {/* Skills Section */}
+        <SectionWrapper id="skills" className="py-20 px-4">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Skills</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                Core tools and concepts used in data science workflows.
+              </p>
+            </motion.div>
+
+            {loading ? (
+              <div className="text-center py-20">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border-4 border-slate-200 dark:border-slate-700 border-t-sky-500 animate-spin"></div>
+                <p className="mt-4 text-slate-600 dark:text-slate-300">Loading skills...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {skills.map((skill, index) => (
+                  <motion.div
+                    key={skill._id || skill.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+                  >
+                    <SkillBar name={skill.name} level={skill.level || 75} category={skill.category} />
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        </SectionWrapper>
+
+        {/* Achievements Section */}
+        <SectionWrapper id="achievements" className="py-20 px-4">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Achievements</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                Academic background and certifications.
+              </p>
+            </motion.div>
+
+            {loading ? (
+              <div className="text-center py-20">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border-4 border-slate-200 dark:border-slate-700 border-t-sky-500 animate-spin"></div>
+                <p className="mt-4 text-slate-600 dark:text-slate-300">Loading achievements...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {achievements.map((item, index) => (
+                  <motion.div
+                    key={item._id || item.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{item.title}</h3>
+                      <span className="text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        {item.date ? new Date(item.date).toLocaleDateString() : ""}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">{item.issuer}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">{item.description}</p>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        </SectionWrapper>
+
+        {/* Contact Section */}
+        <SectionWrapper id="contact" className="py-20 px-4">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Get In Touch</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                Open to internships, data-related projects, and learning opportunities.
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
               >
-                <form
-                  onSubmit={handleContactSubmit}
-                  className="space-y-4"
-                  noValidate
-                >
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <motion.div
-                      whileFocus={{ scale: 1.02 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                    >
+                <form onSubmit={handleContactSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Name
+                      </label>
                       <input
                         type="text"
+                        id="name"
                         name="name"
-                        placeholder="Name"
+                        placeholder="Your name"
                         required
                         value={contact.name}
                         onChange={handleContactChange}
-                        className="w-full rounded-lg border border-slate-300/50 glass-border-highlight px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                       />
-                    </motion.div>
-                    <motion.div
-                      whileFocus={{ scale: 1.02 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                    >
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Email
+                      </label>
                       <input
                         type="email"
+                        id="email"
                         name="email"
-                        placeholder="Email"
+                        placeholder="Your email"
                         required
                         value={contact.email}
                         onChange={handleContactChange}
-                        className="w-full rounded-lg border border-slate-300/50 glass-border-highlight px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                       />
-                    </motion.div>
+                    </div>
                   </div>
 
-                  <motion.div
-                    whileFocus={{ scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  >
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Message
+                    </label>
                     <textarea
-                      rows="4"
+                      id="message"
                       name="message"
-                      placeholder="Message"
+                      rows="4"
+                      placeholder="Your message"
                       required
                       value={contact.message}
                       onChange={handleContactChange}
-                      className="w-full rounded-lg border border-slate-300/50 glass-border-highlight px-3 py-2 text-xs outline-none transition-all focus-visible:ring-2 focus-visible:ring-sky-500"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass bg-white/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                     />
-                  </motion.div>
+                  </div>
 
                   <motion.button
                     type="submit"
                     disabled={sending}
-                    whileHover={!sending ? { scale: 1.03, y: -2 } : {}}
-                    whileTap={!sending ? { scale: 0.98 } : {}}
-                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                    className="group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-2.5 text-xs font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-medium shadow-lg shadow-sky-500/25 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    <span className="relative z-10 flex items-center gap-2">
-                      {sending ? (
-                        <>
-                          <LoadingSpinner size="sm" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Mail className="w-4 h-4" />
-                          Send message
-                        </>
-                      )}
-                    </span>
-                    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-600 to-sky-500 opacity-0 transition-opacity group-hover:opacity-100 disabled:hover:opacity-0"></div>
+                    {sending ? (
+                      <>
+                        <div className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <FiSend className="w-4 h-4" />
+                        Send message
+                      </>
+                    )}
                   </motion.button>
 
-                  <AnimatePresence>
-                    {status && (
-                      <motion.p 
-                        className="text-xs text-slate-600 dark:text-slate-300"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {status}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
+                  {status && (
+                    <motion.p
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`text-sm ${status.includes("successfully") ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+                    >
+                      {status}
+                    </motion.p>
+                  )}
                 </form>
               </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
-                className="space-y-4"
+                className="space-y-6"
               >
-                <div className="rounded-xl border border-slate-200/50 glass-border-highlight p-4">
-                  <h3 className="mb-3 text-sm font-semibold">Get in touch</h3>
-                  <div className="space-y-3">
-                    <motion.a
-                      href="mailto:senujamasinghe@gmail.com"
-                      className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300 hover:text-sky-500 dark:hover:text-sky-400"
-                      whileHover={{ x: 5 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                    >
-                      <Mail className="w-4 h-4" />
+                <div className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">Contact Information</h3>
+                  <div className="space-y-4">
+                    <a href="mailto:senujamasinghe@gmail.com" className="flex items-center gap-3 text-slate-600 dark:text-slate-300 hover:text-sky-500 dark:hover:text-sky-400 transition-colors">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                        <FiMail className="w-4 h-4 text-sky-500" />
+                      </div>
                       senujamasinghe@gmail.com
-                    </motion.a>
-                    <motion.div
-                      className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300"
-                      whileHover={{ x: 5 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                    >
-                      <Phone className="w-4 h-4" />
-                      +94 70 236 2892 | +94 72 126 1959
-                    </motion.div>
-                    <motion.div
-                      className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300"
-                      whileHover={{ x: 5 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                    >
-                      <MapPin className="w-4 h-4" />
-                      Gampaha , Sri Lanka
-                    </motion.div>
+                    </a>
+                    <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                        <FiPhone className="w-4 h-4 text-sky-500" />
+                      </div>
+                      <div>
+                        <p>+94 70 236 2892</p>
+                        <p>+94 72 126 1959</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                        <FiMapPin className="w-4 h-4 text-sky-500" />
+                      </div>
+                      Gampaha, Sri Lanka
+                    </div>
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-slate-200/50 glass-border-highlight p-4">
-                  <h3 className="mb-3 text-sm font-semibold">Social profiles</h3>
-                  <div className="flex gap-3">
+                <div className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">Social Profiles</h3>
+                  <div className="flex gap-4">
                     <motion.a
-  href="https://github.com/Senjohn007"
-  target="_blank"
-  rel="noreferrer"
-  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
-  whileHover={{ y: -3, scale: 1.1 }}
-  whileTap={{ scale: 0.95 }}
-  transition={{ type: "spring", stiffness: 400, damping: 17 }}
->
-  <Github className="w-5 h-5" />
-</motion.a>
-<motion.a
-  href="https://www.linkedin.com/in/senuja-masinghe-55891b36b/"
-  target="_blank"
-  rel="noreferrer"
-  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
-  whileHover={{ y: -3, scale: 1.1 }}
-  whileTap={{ scale: 0.95 }}
-  transition={{ type: "spring", stiffness: 400, damping: 17 }}
->
-  <Linkedin className="w-5 h-5" />
-</motion.a>
-<motion.a
-  href="https://www.instagram.com/yourusername"  
-  target="_blank"
-  rel="noreferrer"
-  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
-  whileHover={{ y: -3, scale: 1.1 }}
-  whileTap={{ scale: 0.95 }}
-  transition={{ type: "spring", stiffness: 400, damping: 17 }}
->
-  <Instagram className="w-5 h-5" />
-</motion.a>
-<motion.a
-  href="https://www.facebook.com/yourusername"  
-  target="_blank"
-  rel="noreferrer"
-  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/50 bg-white/50 text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:bg-slate-900/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
-  whileHover={{ y: -3, scale: 1.1 }}
-  whileTap={{ scale: 0.95 }}
-  transition={{ type: "spring", stiffness: 400, damping: 17 }}
->
-  <Facebook className="w-5 h-5" />
-</motion.a>
-                    
+                      href="https://github.com/Senjohn007"
+                      target="_blank"
+                      rel="noreferrer"
+                      whileHover={{ scale: 1.1, y: -3 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center justify-center w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-colors"
+                      aria-label="GitHub"
+                    >
+                      <FiGithub className="w-5 h-5" />
+                    </motion.a>
+                    <motion.a
+                      href="https://www.linkedin.com/in/senuja-masinghe-55891b36b/"
+                      target="_blank"
+                      rel="noreferrer"
+                      whileHover={{ scale: 1.1, y: -3 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center justify-center w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-600 hover:text-white transition-colors"
+                      aria-label="LinkedIn"
+                    >
+                      <FiLinkedin className="w-5 h-5" />
+                    </motion.a>
                   </div>
                 </div>
               </motion.div>
             </div>
-          </motion.div>
+          </div>
         </SectionWrapper>
       </main>
 

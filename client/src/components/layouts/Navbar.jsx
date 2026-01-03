@@ -185,7 +185,7 @@ function Navbar() {
             </motion.button>
           ))}
 
-          {/* Enhanced Admin entry (desktop) */}
+          {/* Enhanced Admin entry (desktop)
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -198,7 +198,7 @@ function Navbar() {
               <FiLock size={14} className="transition-transform group-hover:scale-110" />
               <span>Admin</span>
             </Link>
-          </motion.div>
+          </motion.div> */}
 
           {/* Enhanced Theme toggle */}
           <motion.button
