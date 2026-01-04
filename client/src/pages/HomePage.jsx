@@ -915,56 +915,56 @@ function HomePage() {
         </SectionWrapper>
 
         {/* Skills Section */}
-        <SectionWrapper id="skills" className="px-4 sm:px-6">
-          <div className="max-w-6xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="text-center mb-8 sm:mb-12"
-            >
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
-                Skills
-              </h2>
-              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-                Key tools, technologies, and methodologies applied across data
-                analysis, visualization, ETL, and full-stack development
-                workflows.
-              </p>
-            </motion.div>
+<SectionWrapper id="skills" className="px-4 sm:px-6">
+  <div className="max-w-6xl mx-auto">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+      className="text-center mb-8 sm:mb-12"
+    >
+      <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+        Skills
+      </h2>
+      <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+        Key tools, technologies, and methodologies applied across data
+        analysis, visualization, ETL, and full-stack development
+        workflows.
+      </p>
+    </motion.div>
 
-            {/* Enhanced filter buttons */}
-            <SkillFilterButtons
-              activeSkillFilter={activeSkillFilter}
-              setActiveSkillFilter={setActiveSkillFilter}
+    {/* Enhanced filter buttons */}
+    <SkillFilterButtons
+      activeSkillFilter={activeSkillFilter}
+      setActiveSkillFilter={setActiveSkillFilter}
+    />
+
+    {loading ? (
+      <LoadingSpinner message="Loading skills..." />
+    ) : (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {filteredSkills.map((skill, index) => (
+          <motion.div
+            key={skill._id || skill.name}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            whileHover={{ y: -5 }}
+            className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow"
+          >
+            <SkillBar
+              name={skill.name}
+              proficiency={skill.proficiency}
+              category={skill.category}
             />
-
-            {loading ? (
-              <LoadingSpinner message="Loading skills..." />
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {filteredSkills.map((skill, index) => (
-                  <motion.div
-                    key={skill._id || skill.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    whileHover={{ y: -5 }}
-                    className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-4 sm:p-6 shadow-md hover:shadow-lg transition-shadow"
-                  >
-                    <SkillBar
-                      name={skill.name}
-                      proficiency={skill.proficiency}
-                      category={skill.category}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </div>
-        </SectionWrapper>
+          </motion.div>
+        ))}
+      </div>
+    )}
+  </div>
+</SectionWrapper>
 
         {/* Achievements Section */}
         <SectionWrapper id="achievements" className="px-4 sm:px-6">
