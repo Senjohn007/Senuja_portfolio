@@ -68,6 +68,27 @@ function ProjectDetailPage() {
     setLightboxOpen(false);
   };
 
+  // Function to split text into sentences (only by full stops, not commas)
+  const splitIntoSentences = (text) => {
+    if (!text) return [];
+    
+    // If it's already an array, join it into a single string first
+    if (Array.isArray(text)) {
+      text = text.join(' ');
+    }
+    
+    // Only split by full stops, not commas
+    if (typeof text === 'string') {
+      return text
+        .split('.')
+        .map(sentence => sentence.trim())
+        .filter(sentence => sentence.length > 0);
+    }
+    
+    // If it's neither, return empty array
+    return [];
+  };
+
   // Loading state with skeleton
   if (loading) {
     return (
@@ -137,8 +158,14 @@ function ProjectDetailPage() {
     visible: { opacity: 1, y: 0 }
   };
 
+  // Split features into sentences (only by full stops)
+  const featureSentences = splitIntoSentences(project.features);
+  
+  // Split learnings into sentences (only by full stops)
+  const learningSentences = splitIntoSentences(project.learnings);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-50 text-base md:text-lg">
       {/* Scroll Progress Indicator */}
       <motion.div 
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-500 to-blue-600 z-50 origin-left"
@@ -224,9 +251,9 @@ function ProjectDetailPage() {
               whileHover={{ x: -3 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate("/")}
-              className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 hover:text-sky-500 dark:hover:text-sky-400 transition-colors"
+              className="inline-flex items-center gap-2 text-base text-slate-600 dark:text-slate-300 hover:text-sky-500 dark:hover:text-sky-400 transition-colors"
             >
-              <FiArrowLeft className="w-4 h-4" />
+              <FiArrowLeft className="w-5 h-5" />
               Back to projects
             </motion.button>
           </motion.div>
@@ -235,29 +262,29 @@ function ProjectDetailPage() {
           <motion.header variants={itemVariants} className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                   <motion.div 
-                    className="inline-flex items-center px-3 py-1 rounded-full glass text-sm font-medium text-sky-600 dark:text-sky-400"
+                    className="inline-flex items-center px-3 py-1 rounded-full glass text-base font-medium text-sky-600 dark:text-sky-400"
                     whileHover={{ scale: 1.05 }}
                   >
-                    {project.category === "Web" && <FiCode className="mr-2" />}
-                    {project.category === "Mobile" && <FiCpu className="mr-2" />}
-                    {project.category === "Data" && <FiDatabase className="mr-2" />}
-                    {project.category === "PowerBI" && <FiTrendingUp className="mr-2" />}
-                    {project.category === "Other" && <FiLayers className="mr-2" />}
+                    {project.category === "Web" && <FiCode className="mr-2 w-5 h-5" />}
+                    {project.category === "Mobile" && <FiCpu className="mr-2 w-5 h-5" />}
+                    {project.category === "Data" && <FiDatabase className="mr-2 w-5 h-5" />}
+                    {project.category === "PowerBI" && <FiTrendingUp className="mr-2 w-5 h-5" />}
+                    {project.category === "Other" && <FiLayers className="mr-2 w-5 h-5" />}
                     <span className="uppercase tracking-wide">{project.category}</span>
                   </motion.div>
                   {created && (
                     <>
                       <span>·</span>
                       <span className="flex items-center gap-1">
-                        <FiCalendar className="w-3 h-3" />
+                        <FiCalendar className="w-4 h-4" />
                         {created}
                       </span>
                     </>
                   )}
                 </div>
-                <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400">
+                <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400">
                   {project.title}
                 </h1>
               </div>
@@ -266,16 +293,16 @@ function ProjectDetailPage() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-3 py-1 text-xs font-medium text-white shadow-lg"
+                  className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-3 py-1 text-sm font-medium text-white shadow-lg"
                   whileHover={{ scale: 1.05 }}
                 >
-                  <FiStar className="w-3 h-3" />
+                  <FiStar className="w-4 h-4" />
                   Featured
                 </motion.div>
               )}
             </div>
 
-            <p className="max-w-2xl text-sm text-slate-600 dark:text-slate-300">
+            <p className="max-w-2xl text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
               {project.description}
             </p>
 
@@ -308,7 +335,7 @@ function ProjectDetailPage() {
                         }}
                         className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 text-slate-800 shadow-md backdrop-blur-sm hover:bg-white dark:bg-slate-800/80 dark:text-white dark:hover:bg-slate-800"
                       >
-                        <FiChevronLeft className="w-4 h-4" />
+                        <FiChevronLeft className="w-5 h-5" />
                       </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.1 }}
@@ -319,7 +346,7 @@ function ProjectDetailPage() {
                         }}
                         className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-2 text-slate-800 shadow-md backdrop-blur-sm hover:bg-white dark:bg-slate-800/80 dark:text-white dark:hover:bg-slate-800"
                       >
-                        <FiChevronRight className="w-4 h-4" />
+                        <FiChevronRight className="w-5 h-5" />
                       </motion.button>
                     </>
                   )}
@@ -377,9 +404,9 @@ function ProjectDetailPage() {
 
           {/* Problem */}
           <motion.section variants={itemVariants} className="space-y-3">
-            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                <FiTrendingUp className="w-4 h-4 text-sky-500" />
+            <h2 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                <FiTrendingUp className="w-5 h-5 text-sky-500" />
               </div>
               Problem
             </h2>
@@ -387,7 +414,7 @@ function ProjectDetailPage() {
               className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
               whileHover={{ y: -5 }}
             >
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
                 {project.problem ||
                   "Describe the real-world problem this project solves, such as inefficient workflows, poor visibility, or manual processes."}
               </p>
@@ -396,9 +423,9 @@ function ProjectDetailPage() {
 
           {/* Solution & features */}
           <motion.section variants={itemVariants} className="space-y-3">
-            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                <FiLayers className="w-4 h-4 text-sky-500" />
+            <h2 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                <FiLayers className="w-5 h-5 text-sky-500" />
               </div>
               Solution & Features
             </h2>
@@ -406,24 +433,28 @@ function ProjectDetailPage() {
               className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
               whileHover={{ y: -5 }}
             >
-              {project.features && project.features.length > 0 ? (
-                <ul className="space-y-3">
-                  {project.features.map((f, index) => (
+              {featureSentences.length > 0 ? (
+                <ul className="space-y-4">
+                  {featureSentences.map((feature, index) => (
                     <motion.li
-                      key={f}
+                      key={index}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.1 * index }}
-                      className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300"
+                      className="flex items-start gap-3 text-lg text-slate-600 dark:text-slate-300 leading-relaxed"
                       whileHover={{ x: 5 }}
                     >
-                      <span className="mt-0.5 h-2 w-2 rounded-full bg-sky-500 flex-shrink-0"></span>
-                      {f}
+                      <span className="mt-2 h-2.5 w-2.5 rounded-full bg-sky-500 flex-shrink-0"></span>
+                      {/* Ensure we're adding a period only if it doesn't already end with one */}
+                      {typeof feature === 'string' 
+                        ? (feature.trim().endsWith('.') ? feature.trim() : `${feature.trim()}.`)
+                        : feature
+                      }
                     </motion.li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-slate-500">
+                <p className="text-lg text-slate-500">
                   Highlight the main features here: dashboards, automation flows,
                   integrations, authentication, role-based access, etc.
                 </p>
@@ -433,9 +464,9 @@ function ProjectDetailPage() {
 
           {/* Tech stack */}
           <motion.section variants={itemVariants} className="space-y-3">
-            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                <FiCode className="w-4 h-4 text-sky-500" />
+            <h2 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                <FiCode className="w-5 h-5 text-sky-500" />
               </div>
               Tech Stack
             </h2>
@@ -444,7 +475,7 @@ function ProjectDetailPage() {
               whileHover={{ y: -5 }}
             >
               {project.techStack && project.techStack.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {project.techStack.map((t, index) => (
                     <motion.span
                       key={t}
@@ -452,25 +483,25 @@ function ProjectDetailPage() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.05 * index }}
                       whileHover={{ scale: 1.1, y: -2 }}
-                      className="rounded-full bg-slate-100/70 px-3 py-1 text-xs text-slate-700 dark:bg-slate-800/70 dark:text-slate-200 shadow-sm"
+                      className="rounded-full bg-slate-100/70 px-4 py-2 text-sm text-slate-700 dark:bg-slate-800/70 dark:text-slate-200 shadow-sm"
                     >
                       {t}
                     </motion.span>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-slate-500">
+                <p className="text-lg text-slate-500">
                   List technologies used across frontend, backend, data, and tools.
                 </p>
               )}
             </motion.div>
           </motion.section>
 
-          {/* Challenges and learnings */}
+          {/* Challenges and learnings - Now with bullet points! */}
           <motion.section variants={itemVariants} className="space-y-3">
-            <h2 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
-                <FiDatabase className="w-4 h-4 text-sky-500" />
+            <h2 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-slate-50 dark:to-slate-400 flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                <FiDatabase className="w-5 h-5 text-sky-500" />
               </div>
               Challenges & Learnings
             </h2>
@@ -478,15 +509,36 @@ function ProjectDetailPage() {
               className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-6 shadow-md"
               whileHover={{ y: -5 }}
             >
-              <p className="text-sm text-slate-600 dark:text-slate-300">
-                {project.learnings ||
-                  "Summarize key implementation challenges (performance, data modeling, auth, deployment) and what you learned from solving them."}
-              </p>
+              {learningSentences.length > 0 ? (
+                <ul className="space-y-4">
+                  {learningSentences.map((learning, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 * index }}
+                      className="flex items-start gap-3 text-lg text-slate-600 dark:text-slate-300 leading-relaxed"
+                      whileHover={{ x: 5 }}
+                    >
+                      <span className="mt-2 h-2.5 w-2.5 rounded-full bg-sky-500 flex-shrink-0"></span>
+                      {/* Ensure we're adding a period only if it doesn't already end with one */}
+                      {typeof learning === 'string' 
+                        ? (learning.trim().endsWith('.') ? learning.trim() : `${learning.trim()}.`)
+                        : learning
+                      }
+                    </motion.li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-lg text-slate-500">
+                  Summarize key implementation challenges (performance, data modeling, auth, deployment) and what you learned from solving them.
+                </p>
+              )}
             </motion.div>
           </motion.section>
 
           {/* Links */}
-          <motion.section variants={itemVariants} className="flex flex-wrap gap-3">
+          <motion.section variants={itemVariants} className="flex flex-wrap gap-4">
             {project.links?.demo && (
               <motion.a
                 whileHover={{ scale: 1.05, y: -2 }}
@@ -494,9 +546,9 @@ function ProjectDetailPage() {
                 href={project.links.demo}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-300/50 glass px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-300/50 glass px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100/70 dark:border-slate-700/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
               >
-                <FiExternalLink className="w-3 h-3" />
+                <FiExternalLink className="w-4 h-4" />
                 Live Demo
               </motion.a>
             )}
@@ -507,9 +559,9 @@ function ProjectDetailPage() {
                 href={project.links.repo}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-slate-900 to-slate-700 px-4 py-2 text-xs font-medium text-white hover:from-slate-800 hover:to-slate-600 dark:from-slate-100 dark:to-slate-300 dark:text-slate-900 dark:hover:from-slate-200 dark:hover:to-slate-400"
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-slate-900 to-slate-700 px-5 py-3 text-sm font-medium text-white hover:from-slate-800 hover:to-slate-600 dark:from-slate-100 dark:to-slate-300 dark:text-slate-900 dark:hover:from-slate-200 dark:hover:to-slate-400"
               >
-                <FiGithub className="w-3 h-3" />
+                <FiGithub className="w-4 h-4" />
                 View Code
               </motion.a>
             )}

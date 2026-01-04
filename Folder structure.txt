@@ -1,0 +1,63 @@
+Senuja_Portfolio/
+├─ client/                          # React + Vite + Tailwind frontend
+│  ├─ public/
+│  │  ├─ index.html
+│  │  ├─ vite.svg
+│  │  └─ projects/                  # Project thumbnails
+│  │     └─ Guts.jpg
+│  ├─ src/
+│  │  ├─ assets/
+│  │  │  └─ senuja_portrait.jpg     # Your profile image
+│  │  ├─ components/
+│  │  │  ├─ layouts/
+│  │  │  │  ├─ Navbar.jsx           # ✅ Enhanced with scroll direction detection
+│  │  │  │  ├─ Footer.jsx           # ✅ Enhanced with social animations
+│  │  │  │  └─ SectionWrapper.jsx   # ✅ Enhanced with multiple animation types
+│  │  │  ├─ ProtectedRoute.jsx      # ✅ Unchanged (logic-sensitive)
+│  │  │  ├─ ui/                     # ✅ UI components
+│  │  │  │  └─ LoadingSpinner.jsx   # ✅ Custom loading spinner component
+│  │  │  └─ animations/             # ✅ Animation components
+│  │  │     ├─ ParticleBackground.jsx # ✅ Particle background effect
+│  │  │     ├─ GridPattern.jsx      # ✅ Grid pattern background
+│  │  │     ├─ GradientOrbs.jsx     # ✅ Animated gradient orbs
+│  │  │     └─ NoiseTexture.jsx     # ✅ Noise texture overlay
+│  │  ├─ context/
+│  │  │  └─ ThemeContext.jsx        # ✅ Enhanced with smooth transitions
+│  │  ├─ pages/
+│  │  │  ├─ HomePage.jsx            # ✅ Completely redesigned with advanced UI
+│  │  │  ├─ ProjectDetailPage.jsx   # ✅ Enhanced with gallery & lightbox
+│  │  │  └─ admin/
+│  │  │     ├─ AdminLoginPage.jsx
+│  │  │     ├─ AdminDashboardLayout.jsx
+│  │  │     ├─ AdminProjectsPage.jsx
+│  │  │     ├─ AdminSkillsPage.jsx
+│  │  │     ├─ AdminAchievementsPage.jsx
+│  │  │     ├─ AdminMessagesPage.jsx
+│  │  │     └─ AdminSettingsPage.jsx
+│  │  ├─ lib/
+│  │  │  ├─ api.js                  # ✅ Unchanged (logic-sensitive)
+│  │  │  ├─ adminApi.js             # ✅ Unchanged (logic-sensitive)
+│  │  │  ├─ adminProjectsApi.js     # ✅ Unchanged (logic-sensitive)
+│  │  │  ├─ adminSkillsApi.js       # ✅ Unchanged (logic-sensitive)
+│  │  │  ├─ adminAchievementsApi.js # ✅ Unchanged (logic-sensitive)
+│  │  │  └─ adminMessagesApi.js     # ✅ Unchanged (logic-sensitive)
+│  │  ├─ app.css                    # ✅ Enhanced with custom styles
+│  │  ├─ app.jsx                    # ✅ Router file (unchanged)
+│  │  ├─ index.css                  # ✅ Enhanced with glassmorphism & animations
+│  │  └─ main.jsx                   # ✅ Entry file (unchanged)
+│  ├─ package.json                  # ✅ Updated with dependencies
+│  ├─ vite.config.js                # ✅ Unchanged
+│  ├─ tailwind.config.js            # ✅ Enhanced with design tokens
+│  └─ postcss.config.js             # ✅ Unchanged
+│
+└─ server/                          # ✅ Unchanged (per instructions)
+   ├─ src/
+   │  ├─ models/
+   │  ├─ controllers/
+   │  ├─ routes/
+   │  ├─ middleware/
+   │  ├─ config/
+   │  ├─ scripts/
+   │  └─ index.js
+   ├─ .env
+   └─ package.json
