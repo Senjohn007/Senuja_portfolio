@@ -43,7 +43,7 @@ function SectionWrapper({ id, className = "", children, animation = "fade" }) {
     <motion.section
       ref={ref}
       id={id}
-      className={`py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24 ${className}`}
+      className={`py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 ${className}`}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
       variants={getVariants()}

@@ -124,14 +124,14 @@ function Navbar() {
       {/* Decorative gradient line at the top */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-sky-500/50 to-transparent"></div>
 
-      <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16">
+      <nav className="mx-auto flex h-12 sm:h-14 md:h-16 max-w-6xl items-center justify-between px-3 sm:px-4">
         {/* Enhanced Logo with glassmorphism */}
         <Link to="/" className="group flex items-center gap-2">
           <motion.div
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            className="relative flex h-10 w-10 items-center justify-center rounded-xl glass text-sm font-bold text-white shadow-lg"
+            className="relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl glass text-xs sm:text-sm font-bold text-white shadow-lg"
           >
             <span className="bg-gradient-to-br from-sky-500 to-blue-600 bg-clip-text text-transparent">
               SM
@@ -143,7 +143,7 @@ function Navbar() {
             />
           </motion.div>
           <motion.span
-            className="hidden text-sm font-medium text-slate-700 dark:text-slate-200 sm:inline"
+            className="hidden text-xs sm:text-sm md:text-base font-medium text-slate-700 dark:text-slate-200 sm:inline"
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
@@ -152,7 +152,7 @@ function Navbar() {
         </Link>
 
         {/* Enhanced Desktop nav with glassmorphism */}
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="hidden items-center gap-4 md:flex lg:gap-6">
           {sections.map((s) => (
             <motion.button
               key={s.id}
@@ -161,7 +161,7 @@ function Navbar() {
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
               onClick={() => handleNavClick(s.id)}
-              className={`relative px-1 py-2 text-sm font-medium transition-colors ${
+              className={`relative px-1 py-2 text-xs sm:text-sm font-medium transition-colors ${
                 activeSection === s.id
                   ? "text-sky-600 dark:text-sky-400"
                   : "text-slate-700 hover:text-sky-500 dark:text-slate-200 dark:hover:text-sky-400"
@@ -186,7 +186,7 @@ function Navbar() {
             whileTap={{ scale: 0.95, rotate: -15 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={toggleTheme}
-            className="relative flex h-10 w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
+            className="relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
             aria-label="Toggle theme"
           >
             <AnimatePresence mode="wait">
@@ -198,7 +198,7 @@ function Navbar() {
                   exit={{ rotate: 90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <FiSun size={18} />
+                  <FiSun size={16} />
                 </motion.div>
               ) : (
                 <motion.div
@@ -208,7 +208,7 @@ function Navbar() {
                   exit={{ rotate: -90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <FiMoon size={18} />
+                  <FiMoon size={16} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -216,7 +216,7 @@ function Navbar() {
         </div>
 
         {/* Enhanced Mobile actions */}
-        <div className="flex items-center gap-3 md:hidden">
+        <div className="flex items-center gap-2 sm:gap-3 md:hidden">
           {/* Admin entry (mobile icon only) */}
           <motion.div
             whileHover={{ scale: 1.1 }}
@@ -225,10 +225,10 @@ function Navbar() {
           >
             <Link
               to="/admin/login"
-              className="relative flex h-10 w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
+              className="relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
               aria-label="Admin login"
             >
-              <FiLock size={16} />
+              <FiLock size={14} />
             </Link>
           </motion.div>
 
@@ -239,7 +239,7 @@ function Navbar() {
             whileTap={{ scale: 0.95, rotate: -15 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={toggleTheme}
-            className="relative flex h-10 w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
+            className="relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
             aria-label="Toggle theme"
           >
             <AnimatePresence mode="wait">
@@ -274,7 +274,7 @@ function Navbar() {
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
             onClick={() => setOpen((prev) => !prev)}
-            className="relative flex h-10 w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
+            className="relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full glass text-slate-700 transition-all hover:bg-sky-500/10 hover:text-sky-600 dark:text-slate-200 dark:hover:text-sky-400"
             aria-label="Toggle navigation"
           >
             <AnimatePresence mode="wait">
@@ -286,7 +286,7 @@ function Navbar() {
                   exit={{ rotate: 90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <FiX size={18} />
+                  <FiX size={16} />
                 </motion.div>
               ) : (
                 <motion.div
@@ -296,7 +296,7 @@ function Navbar() {
                   exit={{ rotate: -90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <FiMenu size={18} />
+                  <FiMenu size={16} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -314,14 +314,14 @@ function Navbar() {
             exit="exit"
             className="glass border-t border-white/10 shadow-lg md:hidden"
           >
-            <div className="flex flex-col gap-1 px-4 pb-4 pt-2">
+            <div className="flex flex-col gap-1 px-3 sm:px-4 pb-4 pt-2">
               {sections.map((s) => (
                 <motion.button
                   key={s.id}
                   variants={mobileItemVariants}
                   type="button"
                   onClick={() => handleNavClick(s.id)}
-                  className={`relative w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors ${
+                  className={`relative w-full rounded-lg px-3 py-2.5 text-left text-xs sm:text-sm font-medium transition-colors ${
                     activeSection === s.id
                       ? "bg-sky-500/10 text-sky-600 dark:bg-sky-950/50 dark:text-sky-400"
                       : "text-slate-700 hover:bg-slate-100/70 dark:text-slate-200 dark:hover:bg-slate-800/70"
