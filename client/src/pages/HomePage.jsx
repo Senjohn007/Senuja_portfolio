@@ -181,7 +181,7 @@ const SkillFilterButtons = ({ activeSkillFilter, setActiveSkillFilter }) => {
   ];
 
   return (
-    <div className="flex justify-center mb-8 overflow-x-auto pb-2 px-4 -mx-4">
+    <div className="flex justify-center mb-8 overflow-x-auto pb-2 px-2 -mx-2">
       <div className="inline-flex rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass p-1">
         {filterOptions.map((filter) => (
           <motion.button
@@ -543,9 +543,9 @@ function HomePage() {
         {/* Hero Section */}
         <SectionWrapper
           id="hero"
-          className="min-h-screen flex items-center justify-center px-4 sm:px-6 py-8 sm:py-12 md:py-16 lg:py-20"
+          className="min-h-screen flex items-center justify-center px-2 sm:px-4 py-8 sm:py-12 md:py-16 lg:py-20"
         >
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -564,7 +564,7 @@ function HomePage() {
               </motion.div>
 
               <motion.h1
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
@@ -576,7 +576,7 @@ function HomePage() {
               </motion.h1>
 
               <motion.p
-                className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-xl mx-auto lg:mx-0"
+                className="text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-300 max-w-xl mx-auto lg:mx-0"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
@@ -658,7 +658,7 @@ function HomePage() {
                     boxShadow: "0 20px 40px -10px rgba(0, 0, 0, 0.3)",
                   }}
                   transition={{ type: "spring", stiffness: 200, damping: 18 }}
-                  className="relative h-48 sm:h-64 md:h-80 lg:h-96 w-48 sm:w-64 md:w-80 lg:w-96 overflow-hidden rounded-2xl border-4 border-white/50 bg-slate-900 shadow-2xl ring-4 ring-sky-500/40 backdrop-blur-sm dark:border-slate-800/50"
+                  className="relative h-40 w-40 sm:h-48 sm:w-48 md:h-64 md:w-64 lg:h-80 lg:w-80 xl:h-96 xl:w-96 overflow-hidden rounded-2xl border-4 border-white/50 bg-slate-900 shadow-2xl ring-4 ring-sky-500/40 backdrop-blur-sm dark:border-slate-800/50"
                 >
                   <img
                     src={profileImage}
@@ -720,7 +720,7 @@ function HomePage() {
         </SectionWrapper>
 
         {/* Current Focus Section */}
-        <SectionWrapper id="focus" className="px-4 sm:px-6">
+        <SectionWrapper id="focus" className="px-2 sm:px-4">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -777,7 +777,7 @@ function HomePage() {
         </SectionWrapper>
 
         {/* About Section */}
-        <SectionWrapper id="about" className="px-4 sm:px-6">
+        <SectionWrapper id="about" className="px-2 sm:px-4">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -856,7 +856,7 @@ function HomePage() {
         </SectionWrapper>
 
         {/* Projects Section */}
-        <SectionWrapper id="projects" className="px-4 sm:px-6">
+        <SectionWrapper id="projects" className="px-2 sm:px-4">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -875,7 +875,7 @@ function HomePage() {
               </p>
             </motion.div>
 
-            <div className="flex justify-center mb-8 overflow-x-auto pb-2 px-4 -mx-4">
+            <div className="flex justify-center mb-8 overflow-x-auto pb-2 px-2 -mx-2">
               <div className="inline-flex rounded-xl border border-slate-200/30 dark:border-slate-700/30 glass p-1">
                 {["All", "Web", "Mobile", "Data", "PowerBI", "Other"].map(
                   (filter) => (
@@ -901,7 +901,7 @@ function HomePage() {
             {loading ? (
               <LoadingSpinner message="Loading projects..." />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                 {filteredProjects.map((project, index) => (
                   <ProjectCard
                     key={project._id}
@@ -915,59 +915,59 @@ function HomePage() {
         </SectionWrapper>
 
         {/* Skills Section */}
-<SectionWrapper id="skills" className="px-4 sm:px-6">
-  <div className="max-w-6xl mx-auto">
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="text-center mb-8 sm:mb-12"
-    >
-      <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
-        Skills
-      </h2>
-      <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-        Key tools, technologies, and methodologies applied across data
-        analysis, visualization, ETL, and full-stack development
-        workflows.
-      </p>
-    </motion.div>
+        <SectionWrapper id="skills" className="px-2 sm:px-4">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-8 sm:mb-12"
+            >
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+                Skills
+              </h2>
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                Key tools, technologies, and methodologies applied across data
+                analysis, visualization, ETL, and full-stack development
+                workflows.
+              </p>
+            </motion.div>
 
-    {/* Enhanced filter buttons */}
-    <SkillFilterButtons
-      activeSkillFilter={activeSkillFilter}
-      setActiveSkillFilter={setActiveSkillFilter}
-    />
-
-    {loading ? (
-      <LoadingSpinner message="Loading skills..." />
-    ) : (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {filteredSkills.map((skill, index) => (
-          <motion.div
-            key={skill._id || skill.name}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            whileHover={{ y: -5 }}
-            className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow"
-          >
-            <SkillBar
-              name={skill.name}
-              proficiency={skill.proficiency}
-              category={skill.category}
+            {/* Enhanced filter buttons */}
+            <SkillFilterButtons
+              activeSkillFilter={activeSkillFilter}
+              setActiveSkillFilter={setActiveSkillFilter}
             />
-          </motion.div>
-        ))}
-      </div>
-    )}
-  </div>
-</SectionWrapper>
+
+            {loading ? (
+              <LoadingSpinner message="Loading skills..." />
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                {filteredSkills.map((skill, index) => (
+                  <motion.div
+                    key={skill._id || skill.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    whileHover={{ y: -5 }}
+                    className="rounded-2xl border border-slate-200/30 dark:border-slate-700/30 glass p-3 sm:p-4 shadow-md hover:shadow-lg transition-shadow"
+                  >
+                    <SkillBar
+                      name={skill.name}
+                      proficiency={skill.proficiency}
+                      category={skill.category}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        </SectionWrapper>
 
         {/* Achievements Section */}
-        <SectionWrapper id="achievements" className="px-4 sm:px-6">
+        <SectionWrapper id="achievements" className="px-2 sm:px-4">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -989,7 +989,7 @@ function HomePage() {
             {loading ? (
               <LoadingSpinner message="Loading achievements..." />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                 {achievements.map((item, index) => (
                   <motion.div
                     key={item._id || item.title}
@@ -1044,7 +1044,7 @@ function HomePage() {
         </SectionWrapper>
 
         {/* Contact Section */}
-        <SectionWrapper id="contact" className="px-4 sm:px-6">
+        <SectionWrapper id="contact" className="px-2 sm:px-4">
           <div className="max-w-6xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

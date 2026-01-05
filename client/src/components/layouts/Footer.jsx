@@ -117,7 +117,7 @@ function Footer() {
       {/* Glassmorphism top border */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-slate-300/50 to-transparent dark:via-slate-700/50"></div>
       
-      <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 sm:flex-row">
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-3 sm:px-4 py-6 sm:py-8 md:flex-row">
         {/* Copyright with enhanced animation */}
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
@@ -127,7 +127,7 @@ function Footer() {
           className="flex flex-col items-center gap-1 sm:items-start"
         >
           <motion.span 
-            className="text-sm font-medium text-slate-700 dark:text-slate-300"
+            className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300"
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
@@ -146,7 +146,7 @@ function Footer() {
 
         {/* Enhanced social links with glassmorphism */}
         <motion.div 
-          className="flex items-center gap-4"
+          className="flex items-center gap-3 sm:gap-4"
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -166,7 +166,7 @@ function Footer() {
               whileHover={{ y: -5, scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              className={`relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full glass text-slate-700 transition-colors ${link.hoverColor} hover:text-white dark:text-slate-200`}
+              className={`relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center overflow-hidden rounded-full glass text-slate-700 transition-colors ${link.hoverColor} hover:text-white dark:text-slate-200`}
             >
               {/* Background gradient that appears on hover */}
               <motion.div
@@ -194,23 +194,23 @@ function Footer() {
           </span>
           <div className="flex items-center gap-2">
             <motion.span 
-              className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-600 font-medium"
+              className="text-xs sm:text-sm text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-600 font-medium"
               whileHover={{ scale: 1.1 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               MERN
             </motion.span>
-            <span className="text-slate-500 dark:text-slate-400">,</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">,</span>
             <motion.span 
-              className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 font-medium"
+              className="text-xs sm:text-sm text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 font-medium"
               whileHover={{ scale: 1.1 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               Tailwind
             </motion.span>
-            <span className="text-slate-500 dark:text-slate-400">&</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">&</span>
             <motion.span 
-              className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-600 font-medium"
+              className="text-xs sm:text-sm text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-600 font-medium"
               whileHover={{ scale: 1.1 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
