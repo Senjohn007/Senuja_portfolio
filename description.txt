@@ -1,0 +1,24 @@
+🚀 Excited to share my Personal Portfolio Website!
+
+I’ve built a full-stack dynamic portfolio using MERN (MongoDB, Express, React, Node.js) + Tailwind CSS, designed to showcase my projects, skills, achievements, and provide a professional contact hub.
+
+Key Highlights:
+
+Projects & Skills: Dynamically fetched from MongoDB with interactive cards and filters
+
+Achievements & Certifications: Timeline and badges with certificate links
+
+Contact Form: Messages saved to DB + email notifications
+
+CV Download: Easily accessible PDF
+
+Admin Panel: Secure JWT-protected dashboard to manage projects, skills, achievements, and visitor messages
+
+Modern UI/UX: Responsive design, dark mode, Framer Motion animations, hover effects, and mobile-first layout
+
+This project combines full-stack development, database integration, REST API design, and modern frontend practices into a single portfolio that also acts as a mini CMS.
+
+🔗 Check it out: [Your Portfolio Link]
+📂 GitHub: [Your GitHub Link]
+
+#PortfolioWebsite #FullStackDevelopment #MERNStack #ReactJS #TailwindCSS #DataScience #WebDevelopment #UIUX
